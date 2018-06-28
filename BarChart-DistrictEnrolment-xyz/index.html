@@ -11,6 +11,54 @@
 }
 
 </style>
+
+<h1>USBE Enrolment and Percentage of Girls Per District</h1>
+
+<p>This is just a stop-gap until a bubble race is done, and a potential back-up,
+as this bar chart is much easier to tweak, create, and maintain. </p>
+
+<p> Bugs, which will be fixed if this graph needs to be used: </p>
+
+<ul>
+
+  <li>x labels, so LEAs, are shifted left by 1</li>
+  <li>x and y axis descriptions don't show</li>
+
+</ul>
+
+<p> Improvements, some or all may be done if this graph needs to be used: </p>
+
+<ul>
+
+  <li>remote dashes in csv</li>
+  <li>handle csv better (e.g., whitespace)</li>
+  <li>make x labels more readable (size? angled? tooltip?)</li>
+  <li>comments in code, modularize via functions, variables names; in general improve style</li>
+
+  <li>do note hardcode legends information, nor colours</li>
+
+    <ul>
+      <li>ideally base solely on number of sections</li>
+      <li>maybe second input file with colours and/or section labels</li>
+    </ul>
+
+  <li>somehow make legend appear where it won't overlap with bars.  probably
+  just move it outside of the graph, and maybe have it expand/collapse</li>
+  <li>test things out, namely percentages to make sure edge cases are correct,
+  and work (e.g., for latter 100% and 0%)</li>
+
+  <li>tool tips or labels for actual precentage</li>
+
+</ul>
+
+<p> Note: </p>
+
+<ul>
+
+  <li>% of girls is randomly generated</li>
+
+</ul>
+
 <svg width="960" height="700"></svg>
 
 <h3> Citations </h3>
@@ -46,7 +94,7 @@ d3.csv("data.csv", function(d) {
 }, function(error, data) {
   if (error) throw error;
 
-  x.domain(data.map(function(d) { return d.LEA; }));
+  x.domain(data.map(function(d) { console.log(d); return d.LEA; }));
   y.domain([0, d3.max(data, function(d) { return d.enrolment; })]);
 
   g.append("g")
@@ -76,14 +124,13 @@ d3.csv("data.csv", function(d) {
   g.selectAll(".bar")
     .data(data)
     .enter().append("rect")
-      //.attr("fill", colours[4])
       .attr("fill", function(d) {
-        console.log(d);
+        //console.log(d);
         var girls_percentage = d.girls/d.enrolment;
         var colour_index = 
          (colours.length-1) - Math.floor(girls_percentage * colours.length);
-        console.log('    ' + girls_percentage);
-        console.log('    ' + colour_index);
+        //console.log('    ' + girls_percentage);
+        //console.log('    ' + colour_index);
         return colours[colour_index];
       })
       .attr("x", function(d) { return x(d.LEA); })
