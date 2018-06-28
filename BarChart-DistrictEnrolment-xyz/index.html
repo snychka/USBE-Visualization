@@ -2,35 +2,6 @@
 <meta charset="utf-8">
 <style>
 
-
-.bar {
-  fill: #158AAC;
-}
-
-/* reversed, darkest to lightest */
-/* "#158AAC", "#29BBE2", "#61D1F3", "#B7FFFE", "#D4FFFF" */
-
-.bar0 {
-  fill: #D4FFFF;
-}
-
-.bar1 {
-  fill: #B7FFFE;
-}
-
-.bar2 {
-  fill: #61D1F3;
-}
-
-.bar3 {
-  fill: #29BBE2;
-}
-
-.bar4 {
-  fill: #158AAC;
-}
-
-
 .bar:hover {
   fill: brown;
 }
@@ -70,6 +41,7 @@ var g = svg.append("g")
 
 d3.csv("data.csv", function(d) {
   d.enrolment = +d.enrolment;
+  d.girls = +d.girls;
   return d;
 }, function(error, data) {
   if (error) throw error;
@@ -104,8 +76,16 @@ d3.csv("data.csv", function(d) {
   g.selectAll(".bar")
     .data(data)
     .enter().append("rect")
-      //.attr("class", "bar4")
-      .attr("fill", colours[4])
+      //.attr("fill", colours[4])
+      .attr("fill", function(d) {
+        console.log(d);
+        var girls_percentage = d.girls/d.enrolment;
+        var colour_index = 
+         (colours.length-1) - Math.floor(girls_percentage * colours.length);
+        console.log('    ' + girls_percentage);
+        console.log('    ' + colour_index);
+        return colours[colour_index];
+      })
       .attr("x", function(d) { return x(d.LEA); })
       .attr("y", function(d) { return y(d.enrolment); })
       .attr("width", x.bandwidth())
