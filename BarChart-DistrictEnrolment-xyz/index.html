@@ -2,9 +2,34 @@
 <meta charset="utf-8">
 <style>
 
+
 .bar {
-  fill: steelblue;
+  fill: #158AAC;
 }
+
+/* reversed, darkest to lightest */
+/* "#158AAC", "#29BBE2", "#61D1F3", "#B7FFFE", "#D4FFFF" */
+
+.bar0 {
+  fill: #D4FFFF;
+}
+
+.bar1 {
+  fill: #B7FFFE;
+}
+
+.bar2 {
+  fill: #61D1F3;
+}
+
+.bar3 {
+  fill: #29BBE2;
+}
+
+.bar4 {
+  fill: #158AAC;
+}
+
 
 .bar:hover {
   fill: brown;
@@ -73,14 +98,17 @@ d3.csv("data.csv", function(d) {
   g.selectAll(".bar")
     .data(data)
     .enter().append("rect")
-      .attr("class", "bar")
+      .attr("class", "bar4")
       .attr("x", function(d) { return x(d.LEA); })
       .attr("y", function(d) { return y(d.enrolment); })
       .attr("width", x.bandwidth())
       .attr("height", function(d) { return height - y(d.enrolment); });
 
+  // reversed, so darkest at 0, lightest at length-1
+  var colours = 
+      ["#158AAC", "#29BBE2", "#61D1F3", "#B7FFFE", "#D4FFFF" ];
   var z = d3.scaleOrdinal()
-      .range(["#158AAC", "#29BBE2", "#61D1F3", "#B7FFFE", "#D4FFFF" ]);
+      .range(colours);
 
   var legend = g.append("g")
       .attr("font-family", "sans-serif")
