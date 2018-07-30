@@ -28,6 +28,8 @@ var max = 0;
 var circle_map = new Array(SIZE);
 (function(a){for(let i = 0; i < a.length; i++){a[i]=0;}})(circle_map);
 
+let transform_map = new Map();
+
 // https://github.com/d3/d3-fetch/blob/master/README.md#csv
 d3.csv("data.csv", function(d) {
   //d.value= +d.value;
@@ -56,25 +58,30 @@ d3.csv("data.csv", function(d) {
         }
       });
 
-  var node = svg.selectAll(".node")
+  var g = svg.selectAll(".node")
     .data(
       pack(root)
       .sort(function(a,b) { return a.value - b.value; })
       .leaves())
-    .enter().append("g")
-      .attr("class", "node")
-      .attr("transform", function(d) { 
-        var val = SIZE - (d.data.girls/d.value) * SIZE;
-        var y  = yscale(val);
-        let index = Math.floor(val - 1);
-        let x = d.x;
-        if (circle_map[index] !== 0) {
-          x = circle_map[index] + d.r;
-          circle_map[index] += d.r*2; 
-        } else {
-          circle_map[index] = d.x + d.r;
-        }
-        return "translate(" + x + "," + y + ")"; 
+    .enter().append("g");
+
+  g.attr("class", function(d) {
+      var val = SIZE - (d.data.girls/d.value) * SIZE;
+      var y  = yscale(val);
+      let index = Math.floor(val - 1);
+      let x = d.x;
+      if (circle_map[index] !== 0) {
+        x = circle_map[index] + d.r;
+        circle_map[index] += d.r*2; 
+      } else {
+        circle_map[index] = d.x + d.r;
+      }
+      transform_map.set(d.id, {x,y});
+      return "node";
+    });
+  var node = g.attr("transform", function(d) {
+        let coords = transform_map.get(d.id);
+        return "translate(" + coords.x + "," + coords.y + ")"; 
       })
       ;
 
