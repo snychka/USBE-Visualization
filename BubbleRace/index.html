@@ -60,8 +60,9 @@ d3.csv("data.csv", function(d) {
     .enter().append("g")
       .attr("class", "node")
       .attr("transform", function(d) { 
-        var val = (d.data.girls/d.value) * 72;
+        var val = 72- (d.data.girls/d.value) * 72;
         var y  = yscale(val);
+        console.log(d.id + ', radius: ' + d.r);
         return "translate(" + d.x + "," + y + ")"; 
       })
       ;
