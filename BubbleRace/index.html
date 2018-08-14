@@ -86,11 +86,17 @@ d3.csv("data.csv", function(d) {
     return "node";
   });
 
-  for (let val of y_map.keys()) {
-    let s = val + ': [ ';
-    y_map.get(val).forEach(function(e) { s += '{' + e.id + ',' + e.r +'}' + ' '; });
-    console.log(s + ']');
-  }
+  (function() {
+    let sorted_keys = Array.from(y_map.keys()).sort(
+        (a,b) => parseFloat(a) - parseFloat(b)
+      );
+
+    for (let val of sorted_keys) {
+      let s = val + ': [ ';
+      y_map.get(val).forEach(function(e) { s += '{' + e.id + ',' + e.r +'}' + ' '; });
+      console.log(s + ']');
+    }
+  })();
 
   var node = g.attr("transform", function(d) {
         let coords = transform_map.get(d.id);
