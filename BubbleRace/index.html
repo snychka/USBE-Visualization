@@ -72,10 +72,19 @@ d3.csv("data.csv", function(d) {
     let id = d.id;
     let r = d.r
 
-    y_map.has(y) ? y_map.get(y).push({id,r}) : y_map.set(y, [{id, r}]);
+    // store ids and largest r for a particular y.
+    // set up for avoiding y overlap
+    if (!y_map.has(y)) {
+      y_map.set(y, {r, ids: [id]});
+    } else {
+      let val = y_map.get(y);
+      val.r = r > val.r ? r : val.r;
+      val.ids.push(id);
+    }
 
     let index = Math.floor(val - 1);
     let x = d.x;
+    // determine x for next circle, to avoid horizontal overlap
     if (circle_map[index] !== 0) {
       x = circle_map[index] + r;
       circle_map[index] += r*2; 
@@ -86,14 +95,15 @@ d3.csv("data.csv", function(d) {
     return "node";
   });
 
-  (function() {
+  (function avoid_y_overlap() {
     let sorted_keys = Array.from(y_map.keys()).sort(
         (a,b) => parseFloat(a) - parseFloat(b)
       );
 
-    for (let val of sorted_keys) {
-      let s = val + ': [ ';
-      y_map.get(val).forEach(function(e) { s += '{' + e.id + ',' + e.r +'}' + ' '; });
+    for (let key of sorted_keys) {
+      let val = y_map.get(key);
+      let s = key + ', ' + val.r + ': [ ';
+      val.ids.forEach(function(e) { s += e + ' '; });
       console.log(s + ']');
     }
   })();
