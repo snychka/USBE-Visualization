@@ -29,6 +29,7 @@ var circle_map = new Array(SIZE);
 (function(a){for(let i = 0; i < a.length; i++){a[i]=0;}})(circle_map);
 
 let transform_map = new Map();
+let y_map = new Map();
 
 // https://github.com/d3/d3-fetch/blob/master/README.md#csv
 d3.csv("data.csv", function(d) {
@@ -66,19 +67,31 @@ d3.csv("data.csv", function(d) {
     .enter().append("g");
 
   g.attr("class", function(d) {
-      var val = SIZE - (d.data.girls/d.value) * SIZE;
-      var y  = yscale(val);
-      let index = Math.floor(val - 1);
-      let x = d.x;
-      if (circle_map[index] !== 0) {
-        x = circle_map[index] + d.r;
-        circle_map[index] += d.r*2; 
-      } else {
-        circle_map[index] = d.x + d.r;
-      }
-      transform_map.set(d.id, {x,y});
-      return "node";
-    });
+    let val = SIZE - (d.data.girls/d.value) * SIZE;
+    let y  = yscale(val);
+    let id = d.id;
+    let r = d.r
+
+    y_map.has(y) ? y_map.get(y).push({id,r}) : y_map.set(y, [{id, r}]);
+
+    let index = Math.floor(val - 1);
+    let x = d.x;
+    if (circle_map[index] !== 0) {
+      x = circle_map[index] + r;
+      circle_map[index] += r*2; 
+    } else {
+      circle_map[index] = d.x + r;
+    }
+    transform_map.set(id, {x,y});
+    return "node";
+  });
+
+  for (let val of y_map.keys()) {
+    let s = val + ': [ ';
+    y_map.get(val).forEach(function(e) { s += '{' + e.id + ',' + e.r +'}' + ' '; });
+    console.log(s + ']');
+  }
+
   var node = g.attr("transform", function(d) {
         let coords = transform_map.get(d.id);
         return "translate(" + coords.x + "," + coords.y + ")"; 
