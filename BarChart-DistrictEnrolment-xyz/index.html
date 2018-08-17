@@ -59,7 +59,7 @@ as this bar chart is much easier to tweak, create, and maintain. </p>
 
 </ul>
 
-<svg width="960" height="700"></svg>
+<svg width="3960" height="700"></svg>
 
 <h3> Citations </h3>
 
@@ -81,7 +81,7 @@ var svg = d3.select("svg"),
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom;
 
-var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+var x = d3.scaleBand().rangeRound([1, width]).padding(0.1),
     y = d3.scaleLinear().rangeRound([height, 0]);
 
 var g = svg.append("g")
@@ -94,15 +94,26 @@ d3.csv("data.csv", function(d) {
 }, function(error, data) {
   if (error) throw error;
 
-  x.domain(data.map(function(d) { console.log(d); return d.LEA; }));
+  x.domain(data.map(function(d) { return d.LEA; }));
   y.domain([0, d3.max(data, function(d) { return d.enrolment; })]);
 
-  g.append("g")
+  let x_axis_dom = g.append("g")
       .attr("class", "axis axis--x")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x))
+
+  let x_axis = d3.axisBottom(x);
+
+  // needed to shift so labels line up.
+  // seems to adjust to different widths fine.
+  // weirdness as to why issue in 1st place, but
+  // likely something to do with origin of rotation
+  const Y_SHIFT = -12;
+  const X_SHIFT = 10;
+  
+  x_axis_dom.call(d3.axisBottom(x))
     .selectAll("text")
-      .attr("transform", "rotate(90) translate(10,0)")
+      .attr("transform",
+            "rotate(90) translate(" + X_SHIFT + ", " + Y_SHIFT + ")")
       .style("text-anchor", "start");
 
   g.append("g")
@@ -125,12 +136,9 @@ d3.csv("data.csv", function(d) {
     .data(data)
     .enter().append("rect")
       .attr("fill", function(d) {
-        //console.log(d);
         var girls_percentage = d.girls/d.enrolment;
         var colour_index = 
          (colours.length-1) - Math.floor(girls_percentage * colours.length);
-        //console.log('    ' + girls_percentage);
-        //console.log('    ' + colour_index);
         return colours[colour_index];
       })
       .attr("x", function(d) { return x(d.LEA); })
