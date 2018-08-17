@@ -17,15 +17,6 @@
 <p>This is just a stop-gap until a bubble race is done, and a potential back-up,
 as this bar chart is much easier to tweak, create, and maintain. </p>
 
-<p> Bugs, which will be fixed if this graph needs to be used: </p>
-
-<ul>
-
-  <li>x labels, so LEAs, are shifted left by 1</li>
-  <li>x and y axis descriptions don't show</li>
-
-</ul>
-
 <p> Improvements, some or all may be done if this graph needs to be used: </p>
 
 <ul>
@@ -59,7 +50,7 @@ as this bar chart is much easier to tweak, create, and maintain. </p>
 
 </ul>
 
-<svg width="3960" height="700"></svg>
+<svg width="960" height="700"></svg>
 
 <h3> Citations </h3>
 
@@ -77,7 +68,7 @@ as this bar chart is much easier to tweak, create, and maintain. </p>
 <script>
 
 var svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 300, left: 40},
+    margin = {top: 20, right: 20, bottom: 300, left: 70},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom;
 
@@ -109,22 +100,36 @@ d3.csv("data.csv", function(d) {
   // likely something to do with origin of rotation
   const Y_SHIFT = -12;
   const X_SHIFT = 10;
-  
+
   x_axis_dom.call(d3.axisBottom(x))
     .selectAll("text")
       .attr("transform",
             "rotate(90) translate(" + X_SHIFT + ", " + Y_SHIFT + ")")
       .style("text-anchor", "start");
 
+
   g.append("g")
       .attr("class", "axis axis--y")
       .call(d3.axisLeft(y).ticks(10))
-    .append("text")
+
+  // y-axis label
+  svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", "0.71em")
-      .attr("text-anchor", "end")
+      .attr("x",0 - (height / 2))
+      .attr("y", 0)
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
       .text("Enrolment");
+
+  // x-axis label
+  let tick_names_height = x_axis_dom.node().getBBox().height;
+  svg.append("text")             
+      .attr("transform",
+            "translate(" + (width/2) + " ," + 
+                           (height + margin.top + tick_names_height) + ")")
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("LEAs");
 
   // reversed, so darkest at 0, lightest at length-1
   var colours = 
@@ -167,6 +172,7 @@ d3.csv("data.csv", function(d) {
       .attr("y", 9.5)
       .attr("dy", "0.32em")
       .text(function(d) { return d; });
+
 });
 
 </script>
