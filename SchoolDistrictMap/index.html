@@ -1,0 +1,69 @@
+<html>
+    <head>
+				<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+				<script src="http://d3js.org/topojson.v1.min.js"></script>
+        <style>
+        </style>
+    </head>
+    <body>
+			<h1>Utah School Districts</h1>
+			<p>Starting point for map</p>
+			<p>Can hover over and see school district names</p>
+			<p>Took template from Ben Sullens Geospatial Pluralsight course, and from
+      various examples by Mike Bostock</p>
+			<p>(main issue:  can't get topojson to work, and stuck with geojson.  Will
+      need some more fiddling.  other issue is need a different project so
+      doesn't correspond to roundness of the earth)</p>
+        <script>
+
+            //Width and height
+            var w = window.innerWidth;
+            var h = window.innerHeight;
+
+
+            //Create SVG element
+            var svg = d3.select("body").append("svg").attr({width:w, height: h});
+
+            //Load in GeoJSON data
+            //d3.json("counties.json", function(json) {
+            d3.json("districts-fips.json", function(json) {
+                console.log(json);
+
+var projection = d3.geo.albers()
+                    .scale(1)
+                    .translate([0,0]);
+
+            //Define path generator
+            var path = d3.geo.path().projection(projection);
+
+                // compute bounds of a point of interest, then derive scale and translate
+                var b = path.bounds(json),
+                    s = .95 / Math.max((b[1][0] - b[0][0]) / w, (b[1][1] - b[0][1]) / h),
+                    t = [(w - s * (b[1][0] + b[0][0])) / 2, (h - s * (b[1][1] + b[0][1])) / 2];
+
+                // update the projection to use computed scale and translate....
+                projection
+                    .scale(s)
+                    .translate(t);
+
+
+                //Bind data and create one path per GeoJSON feature
+                svg.selectAll("path")
+                   .data(json.features)
+                   //.data(json.objects.districts.geometries)
+                   .enter()
+                   .append("path")
+                   .attr("d", path)
+                   .attr("fill","#666666")
+                   .append('title')
+                   .text(function (d) {
+                      console.log(d.properties.NAME);
+                      return d.properties.NAME
+                   });
+
+
+            });
+
+        </script>
+    </body>
+</html>
