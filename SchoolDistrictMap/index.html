@@ -9,11 +9,11 @@
 			<h1>Utah School Districts</h1>
 			<p>Starting point for map</p>
 			<p>Can hover over and see school district names</p>
-			<p>Took template from Ben Sullins Geospatial Pluralsight course, and from
+			<p>Took template from Ben Sullin's Geospatial Pluralsight course, and from
       various examples by Mike Bostock</p>
-			<p>(main issue:  can't get topojson to work, and stuck with geojson.  Will
-      need some more fiddling.  other issue is need a different project so
-      doesn't correspond to roundness of the earth)</p>
+      <p>(<strike>main issue:  can't get topojson to work, and stuck with
+      geojson.  Will need some more fiddling.</strike>  other issue is need a
+      different projection so doesn't correspond to roundness of the earth)</p>
         <script>
 
             //Width and height
@@ -25,32 +25,35 @@
             var svg = d3.select("body").append("svg").attr({width:w, height: h});
 
             //Load in GeoJSON data
-            //d3.json("counties.json", function(json) {
-            d3.json("districts-fips.json", function(json) {
-                console.log(json);
+            //d3.json("districts-fips.json", function(json) {
+            d3.json("districts-new-topo.json", function(error, json) {
+              console.log(json);
 
-var projection = d3.geo.albers()
-                    .scale(1)
-                    .translate([0,0]);
+              var projection = d3.geo.albers();
 
-            //Define path generator
-            var path = d3.geo.path().projection(projection);
+              //Define path generator
+              var path = d3.geo.path().projection(projection);
 
-                // compute bounds of a point of interest, then derive scale and translate
-                var b = path.bounds(json),
-                    s = .95 / Math.max((b[1][0] - b[0][0]) / w, (b[1][1] - b[0][1]) / h),
-                    t = [(w - s * (b[1][0] + b[0][0])) / 2, (h - s * (b[1][1] + b[0][1])) / 2];
+              projection
+                  .scale(1)
+                  .translate([0,0]);
 
-                // update the projection to use computed scale and translate....
-                projection
-                    .scale(s)
-                    .translate(t);
+              //topojson.feature(json, json.objects['districts-fips'])
+              var state = topojson.feature(json, json.objects.districts)
 
+              // compute bounds of a point of interest, then derive scale and translate
+              var b = path.bounds(state),
+                  s = .95 / Math.max((b[1][0] - b[0][0]) / w, (b[1][1] - b[0][1]) / h),
+                  t = [(w - s * (b[1][0] + b[0][0])) / 2, (h - s * (b[1][1] + b[0][1])) / 2];
 
-                //Bind data and create one path per GeoJSON feature
-                svg.selectAll("path")
-                   .data(json.features)
-                   //.data(json.objects.districts.geometries)
+              // update the projection to use computed scale and translate....
+              projection
+                  .scale(s)
+                  .translate(t);
+
+            //Bind data and create one path per GeoJSON feature
+            svg.selectAll("path")
+				      .data(state.features)
                    .enter()
                    .append("path")
                    .attr("d", path)
