@@ -10,13 +10,13 @@
 }
 
 .text {
-	width: 70%;
+	width: 65%;
 	float: left;
 	display: table-row;
 }
 
 .checkboxes {
-	width: 30%;
+	width: 35%;
   height: 400px;
 	float: left;
 	display: table-row;
@@ -91,50 +91,6 @@ as this bar chart is much easier to tweak, create, and maintain. </p>
 </div>
 
 <div class="checkboxes">
-
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
-	<input type="checkbox" /> This is checkbox <br />
 
 </div>
 
@@ -227,6 +183,31 @@ d3.csv("data.csv", function(d) {
       .attr("dy", "1em")
       .style("text-anchor", "middle")
       .text("LEAs");
+
+  // create LEA checkbox
+  // https://stackoverflow.com/questions/21485981/appending-multiple-non-nested-elements-for-each-data-member-with-d3-js/21486088
+  //
+  // if speed is ever important, and this also likey avoids nesting divs,
+  // this may be a better guide:
+  // https://stackoverflow.com/questions/26524877/how-to-combine-two-d3-objects-into-one-for-bulk-operations
+  let select_divs = d3.select('.checkboxes')
+    .selectAll('input')
+    .data(data)
+    .enter()
+    .append('div');
+
+  select_divs
+    .append('input')
+    .attr('type', 'checkbox')
+    .attr('value', function (d) {
+      return d.LEA;
+    });
+
+  select_divs
+    .append('label')
+    .html(function (d) {
+      return d.LEA;
+    });
 
   // reversed, so darkest at 0, lightest at length-1
   var colours = 
