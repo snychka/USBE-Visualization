@@ -166,6 +166,19 @@ d3.csv("data.csv", function(d) {
 }, function(error, data) {
   if (error) throw error;
 
+  data = data.sort(function(a,b) { 
+    let lea_A =  a.LEA.toLowerCase();
+    let lea_B =  b.LEA.toLowerCase();
+
+    if (lea_A < lea_B) {
+      return -1;
+    } else if (lea_A > lea_B) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+
   x.domain(data.map(function(d) { return d.LEA; }));
   y.domain([0, d3.max(data, function(d) { return d.enrolment; })]);
 
