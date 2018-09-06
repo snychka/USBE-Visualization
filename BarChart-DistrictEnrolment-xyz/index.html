@@ -37,8 +37,15 @@
     visibility: hidden;
 }
 
-.bar:hover {
-  fill: brown;
+.tooltip {
+  position: absolute;
+  display: none;
+  min-width: 80px;
+  height: auto;
+  background: none repeat scroll 0 0 #ffffff;
+  border: 1px solid #6F257F;
+  padding: 14px;
+  text-align: center;
 }
 
 .axis--x path {
@@ -117,6 +124,7 @@ as this bar chart is much easier to tweak, create, and maintain. </p>
 
 </ul>
 
+<div class='tooltip'></div>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
@@ -234,7 +242,7 @@ d3.csv("data.csv", function(d) {
   var z = d3.scaleOrdinal()
       .range(colours);
 
-  g.selectAll(".bar")
+  let bars = g.selectAll(".bar")
     .data(data)
     .enter().append("rect")
       .attr("fill", function(d) {
@@ -246,7 +254,20 @@ d3.csv("data.csv", function(d) {
       .attr("x", function(d) { return x(d.LEA); })
       .attr("y", function(d) { return y(d.enrolment); })
       .attr("width", x.bandwidth())
-      .attr("height", function(d) { return height - y(d.enrolment); });
+      .attr("height", function(d) { return height - y(d.enrolment); })
+
+    // do tooltipin'
+    let tooltip = d3.select("body").select(".tooltip");
+    bars
+			.on("mousemove", function(d){
+        tooltip
+          .style("left", d3.event.pageX - 50 + "px")
+          .style("top", d3.event.pageY - 70 + "px")
+          .style("display", "inline-block")
+          .html((d.LEA) + "<br>" + "% girls: " + (d.girls/d.enrolment*100).toFixed(2));
+        })
+    		.on("mouseout", function(d){ tooltip.style("display", "none");});
+
 
 
   var legend = g.append("g")
