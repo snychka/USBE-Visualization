@@ -167,6 +167,8 @@ var x = d3.scaleBand().rangeRound([1, width]).padding(0.1),
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
+
 d3.csv("data.csv", function(d) {
   d.enrolment = +d.enrolment;
   d.girls = +d.girls;
@@ -234,7 +236,33 @@ d3.csv("data.csv", function(d) {
       .text("LEAs");
 
 
+  // likely make update_bars basically surround everything, and
+  // add the bit for an update https://bl.ocks.org/uicoded/52adedb1f67b6ba0211214d97f2796a8
   create_checkboxes_from_data(d3, '.checkboxes', data, "LEA");
+
+  let checkboxes_selection = d3.select('.checkboxes')
+
+  checkboxes_selection.on('change', update_bars);
+
+  function update_bars(e) {
+
+    let chosen = [], newData = data;
+
+    d3.selectAll('.checkboxes  input[type="checkbox"]').each(function(d) {
+      let cb = d3.select(this);
+      
+      if (cb.property('checked')) {
+        //console.log(cb.property('value'));
+        chosen.push(cb.property('value'));
+      }
+    });
+
+    if (chosen.length > 0) {
+      newData = data.filter(function(d) { return chosen.includes(d.LEA); });
+    }
+
+  }
+
 
   // reversed, so darkest at 0, lightest at length-1
   var colours = 
