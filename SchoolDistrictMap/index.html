@@ -1,6 +1,6 @@
 <html>
     <head>
-				<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+				<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
 				<script src="https://d3js.org/topojson.v1.min.js"></script>
         <style>
         </style>
@@ -17,22 +17,26 @@
         <script>
 
             //Width and height
-            var w = window.innerWidth;
-            var h = window.innerHeight;
+            let w = window.innerWidth;
+            let h = window.innerHeight;
 
 
             //Create SVG element
-            var svg = d3.select("body").append("svg").attr({width:w, height: h});
+            let svg = d3.select("body").append("svg");
+            svg.attr('width', w);
+            svg.attr('height', h);
+
+            console.log(svg);
 
             //Load in GeoJSON data
             //d3.json("districts-fips.json", function(json) {
             d3.json("districts-new-topo.json", function(error, json) {
               console.log(json);
 
-              var projection = d3.geo.albers();
+              var projection = d3.geoAlbers();
 
               //Define path generator
-              var path = d3.geo.path().projection(projection);
+              var path = d3.geoPath().projection(projection);
 
               projection
                   .scale(1)
@@ -60,7 +64,7 @@
                    .attr("fill","#666666")
                    .append('title')
                    .text(function (d) {
-                      console.log(d.properties.NAME);
+                      console.log('NAME: ' + d.properties.NAME);
                       return d.properties.NAME
                    });
 
