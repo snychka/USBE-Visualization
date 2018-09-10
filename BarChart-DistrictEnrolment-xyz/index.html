@@ -125,7 +125,7 @@ as this bar chart is much easier to tweak, create, and maintain. </p>
 </ul>
 
 <div class='tooltip'></div>
-<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3.v4.js"></script>
 <script>
 
 // create checkboxes under selector from given data, identified with identifier
@@ -235,14 +235,18 @@ d3.csv("data.csv", function(d) {
       .style("text-anchor", "middle")
       .text("LEAs");
 
+  // reversed, so darkest at 0, lightest at length-1
+  var colours = 
+      ["#158AAC", "#29BBE2", "#61D1F3", "#B7FFFE", "#D4FFFF" ];
+  var z = d3.scaleOrdinal()
+      .range(colours);
 
+  let FIRST_TIME = true;
   // likely make update_bars basically surround everything, and
   // add the bit for an update https://bl.ocks.org/uicoded/52adedb1f67b6ba0211214d97f2796a8
   create_checkboxes_from_data(d3, '.checkboxes', data, "LEA");
 
   let checkboxes_selection = d3.select('.checkboxes')
-
-  checkboxes_selection.on('change', update_bars);
 
   function update_bars(e) {
 
@@ -252,7 +256,6 @@ d3.csv("data.csv", function(d) {
       let cb = d3.select(this);
       
       if (cb.property('checked')) {
-        //console.log(cb.property('value'));
         chosen.push(cb.property('value'));
       }
     });
@@ -261,64 +264,72 @@ d3.csv("data.csv", function(d) {
       newData = data.filter(function(d) { return chosen.includes(d.LEA); });
     }
 
-  }
 
+    // used to figure out enter, update (and merge) and exit
+    // one key was to add a class of .bar
+    // didn't do that before
+    let bars = g.selectAll(".bar")
+      .data(newData);
 
-  // reversed, so darkest at 0, lightest at length-1
-  var colours = 
-      ["#158AAC", "#29BBE2", "#61D1F3", "#B7FFFE", "#D4FFFF" ];
-  var z = d3.scaleOrdinal()
-      .range(colours);
-
-  let bars = g.selectAll(".bar")
-    .data(data)
-    .enter().append("rect")
-      .attr("fill", function(d) {
-        var girls_percentage = d.girls/d.enrolment;
-        var colour_index = 
-         (colours.length-1) - Math.floor(girls_percentage * colours.length);
-        return colours[colour_index];
-      })
-      .attr("x", function(d) { return x(d.LEA); })
-      .attr("y", function(d) { return y(d.enrolment); })
-      .attr("width", x.bandwidth())
-      .attr("height", function(d) { return height - y(d.enrolment); })
-
-    // do tooltipin'
-    // https://bl.ocks.org/alandunning/274bf248fd0f362d64674920e85c1eb7
-    let tooltip = d3.select("body").select(".tooltip");
-    bars
-			.on("mousemove", function(d){
-        tooltip
-          .style("left", d3.event.pageX - 50 + "px")
-          .style("top", d3.event.pageY - 70 + "px")
-          .style("display", "inline-block")
-          .html((d.LEA) + "<br>" + "% girls: " + (d.girls/d.enrolment*100).toFixed(2));
+    bars.enter().append('rect')
+        .merge(bars)
+        .attr("fill", function(d) {
+          var girls_percentage = d.girls/d.enrolment;
+          var colour_index = 
+           (colours.length-1) - Math.floor(girls_percentage * colours.length);
+          return colours[colour_index];
         })
-    		.on("mouseout", function(d){ tooltip.style("display", "none");});
+        .attr('class', 'bar')
+        .attr("x", function(d) { return x(d.LEA); })
+        .attr("y", function(d) { return y(d.enrolment); })
+        .attr("width", x.bandwidth())
+        .attr("height", function(d) { return height - y(d.enrolment); });
+
+    bars.exit().remove();
+
+      // do tooltipin'
+      // https://bl.ocks.org/alandunning/274bf248fd0f362d64674920e85c1eb7
+      let tooltip = d3.select("body").select(".tooltip");
+      bars
+        .on("mousemove", function(d){
+          tooltip
+            .style("left", d3.event.pageX - 50 + "px")
+            .style("top", d3.event.pageY - 70 + "px")
+            .style("display", "inline-block")
+            .html((d.LEA) + "<br>" + "% girls: " + (d.girls/d.enrolment*100).toFixed(2));
+          })
+          .on("mouseout", function(d){ tooltip.style("display", "none");});
 
 
-
-  var legend = g.append("g")
-      .attr("font-family", "sans-serif")
-      .attr("font-size", 10)
-      .attr("text-anchor", "end")
-    .selectAll("g")
-    .data("0-19% girls,20-39% girls,40-59% girls,60-79% girls,80-100% girls".split(/,/).slice().reverse())
-    .enter().append("g")
+    var legend = g.append("g")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 10)
+        .attr("text-anchor", "end")
+      .selectAll("g")
+      .data("0-19% girls,20-39% girls,40-59% girls,60-79% girls,80-100% girls".split(/,/).slice().reverse())
+        .enter()
+      .append("g")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-  legend.append("rect")
-      .attr("x", width - 119)
-      .attr("width", 19)
-      .attr("height", 19)
-      .attr("fill", z);
+    legend.append("rect")
+        .attr("x", width - 119)
+        .attr("width", 19)
+        .attr("height", 19)
+        .attr("fill", z);
 
-  legend.append("text")
-      .attr("x", width - 124)
-      .attr("y", 9.5)
-      .attr("dy", "0.32em")
-      .text(function(d) { return d; });
+    legend.append("text")
+        .attr("x", width - 124)
+        .attr("y", 9.5)
+        .attr("dy", "0.32em")
+        .text(function(d) { return d; });
+
+  }
+
+  update_bars();
+
+  FIRST_TIME = false;
+
+  checkboxes_selection.on('change', update_bars);
 
 });
 
