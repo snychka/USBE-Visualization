@@ -16,74 +16,73 @@
       <p>(<strike>main issue:  can't get topojson to work, and stuck with
       geojson.  Will need some more fiddling.</strike>  other issue is need a
       different projection so doesn't correspond to roundness of the earth)</p>
-        <script>
 
-            //Width and height
-            let w = window.innerWidth;
-            let h = window.innerHeight;
+<script>
 
+  //Width and height
+  let w = window.innerWidth;
+  let h = window.innerHeight;
 
-            //Create SVG element
-            let svg = d3.select("body").append("svg");
-            svg.attr('width', w);
-            svg.attr('height', h);
+  //Create SVG element
+  let svg = d3.select("body").append("svg");
+  svg.attr('width', w);
+  svg.attr('height', h);
 
-            console.log(svg);
+  console.log(svg);
 
-            //Load in GeoJSON data
-            //d3.json("districts-fips.json", function(json) {
-            d3.json("districts-new-topo.json", function(error, json) {
-              console.log(json);
+  //Load in GeoJSON data
+  //d3.json("districts-fips.json", function(json) {
+  d3.json("districts-new-topo.json", function(error, json) {
+    console.log(json);
 
-              var projection = d3.geoAlbersUsa();
+    var projection = d3.geoAlbersUsa();
 
-              //Define path generator
-              var path = d3.geoPath().projection(projection);
+    //Define path generator
+    var path = d3.geoPath().projection(projection);
 
-              projection
-                  .scale(1)
-                  .translate([0,0]);
+    projection
+        .scale(1)
+        .translate([0,0]);
 
-              //topojson.feature(json, json.objects['districts-fips'])
-              var state = topojson.feature(json, json.objects.districts)
+    //topojson.feature(json, json.objects['districts-fips'])
+    var state = topojson.feature(json, json.objects.districts)
 
-              // compute bounds of a point of interest, then derive scale and translate
-              var b = path.bounds(state),
-                  s = .95 / Math.max((b[1][0] - b[0][0]) / w, (b[1][1] - b[0][1]) / h),
-                  t = [(w - s * (b[1][0] + b[0][0])) / 2, (h - s * (b[1][1] + b[0][1])) / 2];
+    // compute bounds of a point of interest, then derive scale and translate
+    var b = path.bounds(state),
+        s = .95 / Math.max((b[1][0] - b[0][0]) / w, (b[1][1] - b[0][1]) / h),
+        t = [(w - s * (b[1][0] + b[0][0])) / 2, (h - s * (b[1][1] + b[0][1])) / 2];
 
-              // update the projection to use computed scale and translate....
-              projection
-                  .scale(s)
-                  .translate(t);
-
-
-  let color = d3.scaleLinear()
-    .domain([0,40])
-    .range(d3.schemeOrRd[3]);
-
-  let id = 0;
-  //Bind data and create one path per GeoJSON feature
-  svg.selectAll("path")
-    .data(state.features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      .attr('stroke', 'white')
-      .attr("fill", function(d) {
-        console.log(d);
-        return color(id++);
-      })
-      .append('title')
-      .text(function (d) {
-        console.log(d.properties.NAME);
-        return d.properties.NAME
-      });
+    // update the projection to use computed scale and translate....
+    projection
+        .scale(s)
+        .translate(t);
 
 
+    let color = d3.scaleLinear()
+      .domain([0,40])
+      .range(d3.schemeOrRd[3]);
 
-            });
+    let id = 0;
+    //Bind data and create one path per GeoJSON feature
+    svg.selectAll("path")
+      .data(state.features)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr('stroke', 'white')
+        .attr("fill", function(d) {
+          console.log(d);
+          return color(id++);
+        })
+        .append('title')
+        .text(function (d) {
+          console.log(d.properties.NAME);
+          return d.properties.NAME
+        });
 
-        </script>
+  });
+
+</script>
+
     </body>
 </html>
