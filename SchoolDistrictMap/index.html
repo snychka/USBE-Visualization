@@ -59,19 +59,25 @@ div.tooltip {
     //Define path generator
     var path = d3.geoPath().projection(projection);
 
+    // this is needed; not quite sure why
+    // (from book mentioned below)
+    // believe it's due to projection for entire country
     projection
       .scale(1)
       .translate([0,0]);
 
-    //topojson.feature(json, json.objects['districts-fips'])
+    // json.objects.districts from console devtools
     var state = topojson.feature(json, json.objects.districts)
 
+    // from 'Learning D3.js 4 Mapping - Second Edition'
+    // similar to https://bl.ocks.org/mbostock/4699541
     // compute bounds of a point of interest, then derive scale and translate
     var b = path.bounds(state),
         s = .95 / Math.max((b[1][0] - b[0][0]) / w, (b[1][1] - b[0][1]) / h),
         t = [(w - s * (b[1][0] + b[0][0])) / 2, (h - s * (b[1][1] + b[0][1])) / 2];
 
     // update the projection to use computed scale and translate....
+    // I think for state?
     projection
       .scale(s)
       .translate(t);
@@ -82,30 +88,35 @@ div.tooltip {
 
     let id = 0;
     // Bind data and create one path per GeoJSON feature
-    let map = svg.selectAll("path")
+    let map = svg.append('g');
+
+    let districts = map.selectAll("path")
       .data(state.features)
         .enter()
         .append("path")
-        .attr("d", path);
-
-
-    map
+        .attr("d", path)
         .attr('stroke', 'white')
         .attr("fill", function(d) {
           return color(id++);
         })
-        .on('mouseover', function(d) {
+        .on('mouseenter', function(d) {
           tooltip.style('opacity', 0.9);
           tooltip.html(d.properties.NAME)
             .style('left', (d3.event.pageX) + 'px')
             .style('top', (d3.event.pageY) + 'px');
         })
-        /*
-        .append('title')
-        .text(function (d) {
-          return d.properties.NAME
-        });
-        */
+
+    // comes very close to only removing tooltip when
+    // mouse leaves entire state.
+    // (if leaves for tooltip, then svg, tooltip'll stick around ...
+    // not too bad.  original issue is tooltip "steals" mouse event
+    // from g ... sigh)
+    map.on('mouseleave', function() {
+      if (d3.event.relatedTarget &&
+          d3.event.relatedTarget.tagName === 'svg') {
+        tooltip.style('opacity', 0);
+      }
+    });
 
   });
 
