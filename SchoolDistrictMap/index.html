@@ -1,27 +1,49 @@
 <html>
-    <head>
-				<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
-        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-				<script src="https://d3js.org/topojson.v1.min.js"></script>
-				<script src="http://colorbrewer2.org/export/colorbrewer.js"></script>
-        <style>
-        </style>
-    </head>
-    <body>
-			<h1>Utah School Districts</h1>
-			<p>Starting point for map</p>
-			<p>Can hover over and see school district names</p>
-			<p>Took template from Ben Sullin's Geospatial Pluralsight course, and from
-      various examples by Mike Bostock</p>
-      <p>(<strike>main issue:  can't get topojson to work, and stuck with
-      geojson.  Will need some more fiddling.</strike>  other issue is need a
-      different projection so doesn't correspond to roundness of the earth)</p>
+
+<style>
+
+div.tooltip {
+  position: absolute;    
+  text-align: center;    
+  /*width: 60px;    
+  height: 28px;*/
+  padding: 2px;    
+  font: 12px sans-serif;    
+  background: lightsteelblue;    
+  border: 0px;                    
+  border-radius: 8px;
+}
+
+</style>
+
+<head>
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <script src="http://colorbrewer2.org/export/colorbrewer.js"></script>
+    <style>
+    </style>
+</head>
+<body>
+  <h1>Utah School Districts</h1>
+  <p>Starting point for map</p>
+  <p>Can hover over and see school district names</p>
+  <p>Took template from Ben Sullin's Geospatial Pluralsight course, and from
+  various examples by Mike Bostock</p>
+  <p>(<strike>main issue:  can't get topojson to work, and stuck with
+  geojson.  Will need some more fiddling.</strike>  other issue is need a
+  different projection so doesn't correspond to roundness of the earth)</p>
 
 <script>
 
   //Width and height
   let w = window.innerWidth;
   let h = window.innerHeight;
+
+  let tooltip = d3.select('body')
+    .append('div')
+    .attr('class', 'tooltip')
+    .style('opacity', 0);
 
   //Create SVG element
   let svg = d3.select("body").append("svg");
@@ -38,8 +60,8 @@
     var path = d3.geoPath().projection(projection);
 
     projection
-        .scale(1)
-        .translate([0,0]);
+      .scale(1)
+      .translate([0,0]);
 
     //topojson.feature(json, json.objects['districts-fips'])
     var state = topojson.feature(json, json.objects.districts)
@@ -51,29 +73,39 @@
 
     // update the projection to use computed scale and translate....
     projection
-        .scale(s)
-        .translate(t);
-
+      .scale(s)
+      .translate(t);
 
     let color = d3.scaleLinear()
       .domain([0,40])
       .range(d3.schemeOrRd[3]);
 
     let id = 0;
-    //Bind data and create one path per GeoJSON feature
-    svg.selectAll("path")
+    // Bind data and create one path per GeoJSON feature
+    let map = svg.selectAll("path")
       .data(state.features)
         .enter()
         .append("path")
-        .attr("d", path)
+        .attr("d", path);
+
+
+    map
         .attr('stroke', 'white')
         .attr("fill", function(d) {
           return color(id++);
         })
+        .on('mouseover', function(d) {
+          tooltip.style('opacity', 0.9);
+          tooltip.html(d.properties.NAME)
+            .style('left', (d3.event.pageX) + 'px')
+            .style('top', (d3.event.pageY) + 'px');
+        })
+        /*
         .append('title')
         .text(function (d) {
           return d.properties.NAME
         });
+        */
 
   });
 
