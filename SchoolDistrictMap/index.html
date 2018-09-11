@@ -28,12 +28,9 @@
   svg.attr('width', w);
   svg.attr('height', h);
 
-  console.log(svg);
-
   //Load in GeoJSON data
   //d3.json("districts-fips.json", function(json) {
   d3.json("districts-new-topo.json", function(error, json) {
-    console.log(json);
 
     var projection = d3.geoAlbersUsa();
 
@@ -71,12 +68,10 @@
         .attr("d", path)
         .attr('stroke', 'white')
         .attr("fill", function(d) {
-          console.log(d);
           return color(id++);
         })
         .append('title')
         .text(function (d) {
-          console.log(d.properties.NAME);
           return d.properties.NAME
         });
 
