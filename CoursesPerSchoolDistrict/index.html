@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Courses per School (in a District)</title>
+<style>
+
+.container {
+	width: 90%;
+	margin: auto;
+	overflow: auto;
+	display: table;
+}
+
+.text {
+	width: 65%;
+	float: left;
+	display: table-row;
+}
+
+.checkboxes {
+	width: 35%;
+  height: 400px;
+	float: left;
+	display: table-row;
+	overflow-x: auto;
+	overflow-y: scroll;
+}
+
+/* didn't need to use. leaving in, but weird */
+.clear {
+    clear: both;
+}
+
+.clear:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0px;
+    visibility: hidden;
+}
+
+.tooltip {
+  position: absolute;
+  display: none;
+  min-width: 80px;
+  height: auto;
+  background: none repeat scroll 0 0 #ffffff;
+  border: 1px solid #6F257F;
+  padding: 14px;
+  text-align: center;
+}
+
+.axis--x path {
+  display: none;
+}
+
+</style>
+
+</head>
+
+<h1>Courses per School</h1>
+
+<div class="container">
+<div class="text">
+
+
+</div>
+
+<div class="checkboxes">
+
+</div>
+
+<div class="clear"></div>
+
+
+</div> <!-- container div -->
+
+
+
+<div>
+<svg width="960" height="700"></svg>
+</div>
+
+<script src="https://d3js.org/d3.v4.js"></script>
+<script>
+
+</script>
+
+</body>
+</html>
