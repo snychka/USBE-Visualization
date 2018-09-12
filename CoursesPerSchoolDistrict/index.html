@@ -150,6 +150,7 @@ function(error, data) {
 
   console.log(sorted_data);
 
+  // citation: http://www.shanegibney.com/shanegibney/d3-js-v4-count-values-in-an-object/
   let course_count = d3.nest()
     .key(function(d) {
       return d.school;
