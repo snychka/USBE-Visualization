@@ -87,8 +87,20 @@
 
 <script>
 
+/*
+
+- going to have to check for discrepancies and add to mapping, like 'Salt Lake'
+
+*/
+
 let params = (new URL(document.location)).searchParams;
 let district = params.get('lea') + ' District';
+
+let mapping = {
+  'Salt Lake City District': 'Salt Lake District'
+}
+
+district = mapping[district] || district;
 
 document.getElementsByClassName('title')[0].innerHTML +=
   ' (' + district + ')';
