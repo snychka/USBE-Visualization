@@ -60,15 +60,15 @@
 
 </head>
 
-<h1>Courses per School</h1>
+<h1 class='title'>Courses per School</h1>
 
-<div class="container">
-<div class="text">
+<div class='container'>
+<div class='text'>
 
 
 </div>
 
-<div class="checkboxes">
+<div class='checkboxes'>
 
 </div>
 
@@ -84,7 +84,14 @@
 </div>
 
 <script src="https://d3js.org/d3.v4.js"></script>
+
 <script>
+
+let params = (new URL(document.location)).searchParams;
+let district = params.get('lea');
+
+document.getElementsByClassName('title')[0].innerHTML +=
+  ' (' + district + ' School District)';
 
 </script>
 
