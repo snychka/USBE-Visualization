@@ -123,7 +123,31 @@ function(error, data) {
     }
   });
 
-  console.log(filtered_data);
+  let sorted_data = filtered_data.sort(function(a,b) { 
+    let lea_A =  a.school.toLowerCase();
+    let lea_B =  b.school.toLowerCase();
+
+    if (lea_A < lea_B) {
+      return -1;
+    } else if (lea_A > lea_B) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+
+  console.log(sorted_data);
+
+  let course_count = d3.nest()
+    .key(function(d) {
+      return d.school;
+    })
+    .rollup(function(leaves) {
+      return leaves.length;
+    })
+    .entries(filtered_data);
+
+  console.log(course_count);
 
 
 });
