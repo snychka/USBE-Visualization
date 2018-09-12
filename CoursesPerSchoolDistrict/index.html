@@ -88,10 +88,46 @@
 <script>
 
 let params = (new URL(document.location)).searchParams;
-let district = params.get('lea');
+let district = params.get('lea') + ' District';
 
 document.getElementsByClassName('title')[0].innerHTML +=
-  ' (' + district + ' School District)';
+  ' (' + district + ')';
+
+
+var svg = d3.select("svg"),
+    margin = {top: 20, right: 20, bottom: 300, left: 70},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom;
+
+var x = d3.scaleBand().rangeRound([1, width]).padding(0.1),
+    y = d3.scaleLinear().rangeRound([height, 0]);
+
+var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("CS ENDO Scrub.xlsx - Overall SB93 Endos.csv",
+function (d) {
+  return {
+    lea: d.LEA,
+    school: d.school_name,
+    course: d.cert_endo_degree_desc
+  };
+},
+function(error, data) {
+
+  if (error) throw error;
+
+  let filtered_data = data.filter(function(d) {
+    if (d.lea === district) {
+      return d;
+    }
+  });
+
+  console.log(filtered_data);
+
+
+});
+
 
 </script>
 
