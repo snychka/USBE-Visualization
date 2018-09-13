@@ -77,28 +77,6 @@ given district (LEA) </p>
 
 <div class="links">
 
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
-
 </div>
 
 <div class="clear"></div>
@@ -112,8 +90,10 @@ given district (LEA) </p>
   - Took template from Ben Sullin's Geospatial Pluralsight course, and from
     various examples by Mike Bostock
 
+  - MAKE LINKS CODE LESS HACKY.  somehow
+    - consolidating href code, easy.  do it
+    - try to pass in properties.  nested, so not sure how/if possible :(
   - put enrolments in tooltip
-  - have list of districts with links; scrollable div or something
 
   not overly important; in order of easiest to fix or a tad bit more important
   - make tooltip link look a bit better (css)
@@ -124,9 +104,19 @@ given district (LEA) </p>
     https://github.com/d3/d3-scale#_continuous
   */
 
+  function create_links_from_data(d3, selector, data, identifier) {
+    let select_divs = d3.select(selector)
+      .selectAll('div')
+      .data(data)
+      .enter()
+      .append('div')
+      .html(function (d) {
+        return d.properties.NAME;
+      });
+  }
+
   //Width and height
   //let w = window.innerWidth;
-  //let w = 'inherit';
   let h = window.innerHeight;
 
   let tooltip = d3.select('body')
@@ -179,8 +169,23 @@ given district (LEA) </p>
     // Bind data and create one path per GeoJSON feature
     let map = svg.append('g');
 
+    let data = state.features.sort(function(a,b) { 
+      let name_A =  a.properties.NAME.toLowerCase();
+      let name_B =  b.properties.NAME.toLowerCase();
+
+      if (name_A < name_B) {
+        return -1;
+      } else if (name_A > name_B) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    create_links_from_data(d3, '.links', data, "blargh");
+
     let districts = map.selectAll("path")
-      .data(state.features)
+      .data(data)
         .enter()
         .append("path")
         .attr("d", path)
