@@ -8,6 +8,41 @@
 
 <style>
 
+.container {
+	width: 90%;
+	margin: auto;
+	overflow: auto;
+	display: table;
+}
+
+.svg {
+	width: 65%;
+	float: left;
+	display: table-row;
+}
+
+.links {
+	width: 35%;
+  height: 400px;
+	float: left;
+	display: table-row;
+	overflow-x: auto;
+	overflow-y: scroll;
+}
+
+/* didn't need to use. leaving in, but weird */
+.clear {
+    clear: both;
+}
+
+.clear:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0px;
+    visibility: hidden;
+}
+
 div.tooltip {
   position: absolute;    
   text-align: center;    
@@ -35,6 +70,42 @@ div.tooltip {
 <p> Will show number of CS courses (really endorsements) per school for the
 given district (LEA) </p>
 
+<div class="container">
+<div class="svg">
+
+</div>
+
+<div class="links">
+
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+;lasjd flkasjf;lkasdjf;lksjf;asdlkj<br />
+
+</div>
+
+<div class="clear"></div>
+
+
+</div> <!-- container div -->
+
 <script>
 
   /*
@@ -54,7 +125,8 @@ given district (LEA) </p>
   */
 
   //Width and height
-  let w = window.innerWidth;
+  //let w = window.innerWidth;
+  //let w = 'inherit';
   let h = window.innerHeight;
 
   let tooltip = d3.select('body')
@@ -63,8 +135,8 @@ given district (LEA) </p>
     .style('opacity', 0);
 
   //Create SVG element
-  let svg = d3.select("body").append("svg");
-  svg.attr('width', w);
+  let svg = d3.select(".svg").append("svg");
+  svg.attr('width', '100%');
   svg.attr('height', h);
 
   //Load in GeoJSON data
@@ -88,6 +160,7 @@ given district (LEA) </p>
     // from 'Learning D3.js 4 Mapping - Second Edition'
     // similar to https://bl.ocks.org/mbostock/4699541
     // compute bounds of a point of interest, then derive scale and translate
+    let w = +d3.select('body').select('svg').style('width').replace(/px$/, '');
     let b = path.bounds(state),
         s = .95 / Math.max((b[1][0] - b[0][0]) / w, (b[1][1] - b[0][1]) / h),
         t = [(w - s * (b[1][0] + b[0][0])) / 2, (h - s * (b[1][1] + b[0][1])) / 2];
