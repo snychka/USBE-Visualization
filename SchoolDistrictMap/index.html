@@ -111,7 +111,19 @@ given district (LEA) </p>
       .enter()
       .append('div')
       .html(function (d) {
-        return d.properties.NAME;
+        // remove trailing ' School District'
+        // case-insensitive, only single space delimiters
+        let query = d.properties.NAME.replace(/\s/g, '+');
+        let last_word_index = query.lastIndexOf('+');
+        let second_last_word_index = query.lastIndexOf('+', last_word_index-1);
+        if (query.substring(second_last_word_index+1).toLowerCase()  === 
+            'school+district') {
+          query = query.substring(0, second_last_word_index);
+        }
+        return '<a href= "../CoursesPerSchoolDistrict?lea=' + query +'" target="_blank">' +
+          d.properties.NAME + '</a>';
+        console.log(temp);
+        return temp;
       });
   }
 
