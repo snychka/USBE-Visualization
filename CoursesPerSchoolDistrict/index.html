@@ -121,7 +121,7 @@ function(error, data) {
     .attr("class", "axis")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x))
-    .selectAll("text", function(d) {console.log('text: ' + d); })	
+    .selectAll("text")
       .style("text-anchor", "end")
       .attr("dx", "-.8em")
       .attr("dy", ".15em")
@@ -146,7 +146,7 @@ function(error, data) {
   .enter().append("rect")
     .attr("class", "bar")
     .attr("x", function(d) { return x(d.key); })
-    .attr("y", function(d) { console.log(d); return y(+d.value); })
+    .attr("y", function(d) { return y(+d.value); })
     .attr("width", x.bandwidth())
     .attr("height", function(d) { return height - y(d.value); });
 
