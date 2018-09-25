@@ -1,8 +1,7 @@
 # USBE-Visualization
 
 - [School Districts Map](https://snychka.github.io/USBE-Visualization/SchoolDistrictMap)
-  - links to graphs of courses per school
-- ["3D" Bar Chart](https://snychka.github.io/USBE-Visualization/BarChart-DistrictEnrolment-xyz/)
+  - links to graphs of endorsements per school
+- [Business vs CS Course Enrollments](https://snychka.github.io/USBE-Visualization/BusinessVsCSCourseEnrollment/)
 
 
-([Bubble Race](https://snychka.github.io/USBE-Visualization/BubbleRace/))
