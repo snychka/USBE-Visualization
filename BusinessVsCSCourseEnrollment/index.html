@@ -109,11 +109,21 @@ function(error, data) {
     return graph_map;
   }
 
-  console.log('before');
 
   let graph_map = project_data(data);
 
-  console.log(graph_map);
+  let graph_data = []
+  for (let entry of graph_map.entries()) {
+    let key = JSON.parse(entry[0]);
+    let el = {
+      year: key.year, 
+      type: key.type,
+      enrol: entry[1]
+    };
+    graph_data.push(el);
+  }
+
+  console.log(graph_data);
 
 });
 
