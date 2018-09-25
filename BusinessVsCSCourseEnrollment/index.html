@@ -75,6 +75,7 @@ let x0 = d3.scaleBand().range([0, width]).paddingInner(0.1);
 let x1 = d3.scaleBand().padding(0.05);
 let y = d3.scaleLinear().rangeRound([height, 0]);
 
+
 let graph = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -145,6 +146,10 @@ function(error, data) {
   });
   let bar_type_keys = Array.from(bar_type_set);
 
+  let legend_scale = d3.scaleOrdinal()
+    .domain([1,bar_type_keys.length])
+    .range(['slateblue', 'steelblue'])
+
   x0.domain(graph_data.map( d => d.year ));
   x1.domain(bar_type_keys).rangeRound([0, x0.bandwidth()]);
   y.domain([0, d3.max(graph_data, el => d3.max(el.inner, d => d.enrol))]);
@@ -161,7 +166,7 @@ function(error, data) {
       .attr('y', d => y(d.enrol))
       .attr('width', x1.bandwidth())
       .attr('height', d => height - y(d.enrol))
-      .attr('fill', 'blue');
+      .attr('fill', d=> legend_scale(d.type));
 
   graph.append('g')
     .attr('class', 'axis')
@@ -174,7 +179,26 @@ function(error, data) {
   graph.append('g')
     .attr('class', 'axis')
     .call(d3.axisLeft(y).ticks(null).tickSizeOuter(0));
-    
+   
+  let legend = graph.append('g')
+      .attr('font-family', 'sans-serif')
+      .attr('font-size', 10)
+    .selectAll('g')
+    .data(bar_type_keys)
+    .enter().append('g')
+      .attr('transform', (d, i) => 'translate(0,' + i * 20 + ')');
+
+  legend.append('rect')
+    .attr('x', 19)
+    .attr('width', 19)
+    .attr('height', 19)
+    .attr('fill', legend_scale);
+
+  legend.append('text')
+    .attr('x', 19 + 24)
+    .attr('y', 9.5)
+    .attr('dy', '0.32em')
+    .text( d => d);
 
 });
 
