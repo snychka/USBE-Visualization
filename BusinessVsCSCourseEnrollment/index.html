@@ -116,31 +116,48 @@ function(error, data) {
 
   let graph_map = project_data(data);
 
-  // "flatten" the Map into an array of objects
+  // create an array, with a nested structure, conducive to the nested
+  // structure of the bar chart
   // (again, similar to project_data, can likely make this more generic ...
   //  later make into a function, too)
   let graph_data = []
   for (let entry of graph_map.entries()) {
     let key = JSON.parse(entry[0]);
-    let el = {
-      year: key.year, 
-      type: key.type,
-      enrol: entry[1]
-    };
-    graph_data.push(el);
+    let el = graph_data.find( e => e.year === key.year);
+    if (!el) {
+      el = {
+        year: key.year, 
+        inner: []  
+      };
+      graph_data.push(el);
+    }
+    el.inner.push({ type: key.type, enrol: entry[1]});
   }
   graph_data.sort((a,b) => +a.year - +b.year);
 
-  // get just types, or more generically what will be each individual bar
+  // get just types (made more complex to allow for future bars representing
+  // courses)
   let bar_type_set = new Set();
-  graph_data.forEach(function(d) {
-    bar_type_set.add(d.type);
+  graph_data.forEach(function(el) {
+    el.inner.forEach(function(d) {
+      bar_type_set.add(d.type);
+    });
   });
   let bar_type_keys = Array.from(bar_type_set);
 
   x0.domain(graph_data.map( d => d.year ));
   x1.domain(bar_type_keys).rangeRound([0, x0.bandwidth()]);
-  y.domain([0, d3.max(graph_data, d => d.enrol)]);
+  y.domain([0, d3.max(graph_data, el => d3.max(el.inner, d => d.enrol))]);
+
+  /*
+  graph.append('g')
+    .selectAll('g')
+    .data(graph_data)
+    .enter().append('g')
+      .attr('transform', d => 'translate(' + x0(d.year) + ',0)')
+    .selectAll('rect')
+    .data( d => bar_type_keys);
+  */
 
   graph.append('g')
     .attr('class', 'axis')
