@@ -85,13 +85,14 @@ function (d, i, c) {
 },
 function(error, data) {
 
+  // tally up enrolments per year and course type
+  // (should be able to reasonably easy make it more generic
+  //  so later it can, with a few mods., handle per course name)
   function project_data(d) {
 
     let graph_map = new Map();
 
     d.forEach(function(d) {
-
-      //debugger;
 
       let type_obj = course_mapping[d.code];
       if (!type_obj) { return; }
@@ -112,6 +113,9 @@ function(error, data) {
 
   let graph_map = project_data(data);
 
+  // "flatten" the Map into an array of objects
+  // (again, similar to project_data, can likely make this more generic ...
+  //  later make into a function, too)
   let graph_data = []
   for (let entry of graph_map.entries()) {
     let key = JSON.parse(entry[0]);
@@ -123,7 +127,15 @@ function(error, data) {
     graph_data.push(el);
   }
 
-  console.log(graph_data);
+  // get just types, or more generically what will be each individual bar
+  let bar_type_set = new Set();
+  graph_data.forEach(function(d) {
+    bar_type_set.add(d.type);
+  });
+  let bar_type_data = Array.from(bar_type_set);
+
+  console.log(bar_type_data);
+
 
 });
 
