@@ -69,8 +69,10 @@ var svg = d3.select("svg"),
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom;
 
-let x = d3.scaleBand().range([0, width]).padding(0.1);
-let y = d3.scaleLinear().rangeRound([height, 0]);
+// years
+let x0 = d3.scaleBand().range([0, width]).paddingInner(0.1);
+// actual bars
+let x1 = d3.scaleBand().padding(0.05);
 
 let graph = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -126,15 +128,22 @@ function(error, data) {
     };
     graph_data.push(el);
   }
+  graph_data.sort((a,b) => +a.year - +b.year);
 
   // get just types, or more generically what will be each individual bar
   let bar_type_set = new Set();
   graph_data.forEach(function(d) {
     bar_type_set.add(d.type);
   });
-  let bar_type_data = Array.from(bar_type_set);
+  let bar_type_keys= Array.from(bar_type_set);
 
-  console.log(bar_type_data);
+  x0.domain(graph_data.map( (d) => d.year ));
+  x1.domain(bar_type_keys).rangeRound([0, x0.bandwidth()]);
+
+  graph.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x0));  
 
 
 });
