@@ -73,6 +73,7 @@ var svg = d3.select("svg"),
 let x0 = d3.scaleBand().range([0, width]).paddingInner(0.1);
 // actual bars
 let x1 = d3.scaleBand().padding(0.05);
+let y = d3.scaleLinear().rangeRound([height, 0]);
 
 let graph = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -137,14 +138,20 @@ function(error, data) {
   });
   let bar_type_keys= Array.from(bar_type_set);
 
-  x0.domain(graph_data.map( (d) => d.year ));
+  x0.domain(graph_data.map( d => d.year ));
   x1.domain(bar_type_keys).rangeRound([0, x0.bandwidth()]);
+  y.domain([0, d3.max(graph_data, d => d.enrol)]);
 
-  graph.append("g")
-    .attr("class", "axis")
-    .attr("transform", "translate(0," + height + ")")
+  graph.append('g')
+    .attr('class', 'axis')
+    .attr('transform', 'translate(0,' + height + ')')
     .call(d3.axisBottom(x0));  
 
+  // well, not ideal, as top "tick" shows and looks weird, but ok for now
+  graph.append('g')
+    .attr('class', 'axis')
+    .call(d3.axisLeft(y).ticks(null));
+    
 
 });
 
