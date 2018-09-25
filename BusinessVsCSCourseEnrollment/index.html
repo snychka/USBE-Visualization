@@ -136,7 +136,7 @@ function(error, data) {
   graph_data.forEach(function(d) {
     bar_type_set.add(d.type);
   });
-  let bar_type_keys= Array.from(bar_type_set);
+  let bar_type_keys = Array.from(bar_type_set);
 
   x0.domain(graph_data.map( d => d.year ));
   x1.domain(bar_type_keys).rangeRound([0, x0.bandwidth()]);
@@ -147,10 +147,9 @@ function(error, data) {
     .attr('transform', 'translate(0,' + height + ')')
     .call(d3.axisBottom(x0));  
 
-  // well, not ideal, as top "tick" shows and looks weird, but ok for now
   graph.append('g')
     .attr('class', 'axis')
-    .call(d3.axisLeft(y).ticks(null));
+    .call(d3.axisLeft(y).ticks(null).tickSizeOuter(0));
     
 
 });
