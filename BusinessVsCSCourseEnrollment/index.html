@@ -149,15 +149,19 @@ function(error, data) {
   x1.domain(bar_type_keys).rangeRound([0, x0.bandwidth()]);
   y.domain([0, d3.max(graph_data, el => d3.max(el.inner, d => d.enrol))]);
 
-  /*
   graph.append('g')
     .selectAll('g')
     .data(graph_data)
     .enter().append('g')
       .attr('transform', d => 'translate(' + x0(d.year) + ',0)')
     .selectAll('rect')
-    .data( d => bar_type_keys);
-  */
+    .data( d => d.inner)
+      .enter().append('rect')
+      .attr('x', d => x1(d.type))
+      .attr('y', d => y(d.enrol))
+      .attr('width', x1.bandwidth())
+      .attr('height', d => height - y(d.enrol))
+      .attr('fill', 'blue');
 
   graph.append('g')
     .attr('class', 'axis')
