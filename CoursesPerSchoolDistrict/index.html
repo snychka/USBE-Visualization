@@ -31,7 +31,8 @@
 - going to have to check for discrepancies and add to mapping, like 'Salt Lake'
 - have a max bar width.  somehow.  e.g., for Beaver
 
-- Beaver, Granite, and Weber districts are great test-beds.  small, big, big
+- Beaver, Box Elder, Granite, and Weber districts are great test-beds.
+  small, small, big, big
 
 */
 
@@ -149,6 +150,7 @@ function(error, data) {
       .attr("transform", "rotate(-65)");
 
   // Add the y Axis
+  // need to fix so not redundant for small y domains (e.g., Box Elder)
   graph.append("g")
     .attr("class", "axis")
     .call(
