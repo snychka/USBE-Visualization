@@ -90,13 +90,12 @@ div.tooltip {
 <div class="links"></div>
 
 <hr />
+<hr />
 
 <h3>Charters</h3>
 
-<div class="charters">
-<div><a href="../CoursesPerSchoolDistrict?lea=Beaver" target="_blank">Beaver School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Box+Elder" target="_blank">Box Elder School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Cache" target="_blank">Cache School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Canyons" target="_blank">Canyons School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Carbon" target="_blank">Carbon School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Daggett" target="_blank">Daggett School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Davis" target="_blank">Davis School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Duchesne" target="_blank">Duchesne School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Emery" target="_blank">Emery School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Garfield" target="_blank">Garfield School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Grand" target="_blank">Grand School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Granite" target="_blank">Granite School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Iron" target="_blank">Iron School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Jordan" target="_blank">Jordan School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Juab" target="_blank">Juab School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Kane" target="_blank">Kane School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Logan" target="_blank">Logan School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Millard" target="_blank">Millard School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Morgan" target="_blank">Morgan School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Murray" target="_blank">Murray School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Nebo" target="_blank">Nebo School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=North+Sanpete" target="_blank">North Sanpete School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=North+Summit" target="_blank">North Summit School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Ogden" target="_blank">Ogden School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Park+City" target="_blank">Park City School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Piute" target="_blank">Piute School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Provo" target="_blank">Provo School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Rich" target="_blank">Rich School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Salt+Lake+City" target="_blank">Salt Lake City School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=San+Juan" target="_blank">San Juan School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Sevier" target="_blank">Sevier School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=South+Sanpete" target="_blank">South Sanpete School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=South+Summit" target="_blank">South Summit School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Tintic" target="_blank">Tintic School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Tooele" target="_blank">Tooele School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Uintah" target="_blank">Uintah School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Wasatch" target="_blank">Wasatch School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Washington" target="_blank">Washington School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Wayne" target="_blank">Wayne School District</a></div><div><a href="../CoursesPerSchoolDistrict?lea=Weber" target="_blank">Weber School District</a></div></div>
+<div class="charters"></div>
 
-</div>
 </div>
 
 <div class="clear"></div>
@@ -124,6 +123,9 @@ div.tooltip {
     https://github.com/d3/d3-scale#_continuous
   */
 
+  // HACK!
+  let lea_names = []
+
   function create_links_from_data(d3, selector, data, identifier) {
     let select_divs = d3.select(selector)
       .selectAll('div')
@@ -131,11 +133,17 @@ div.tooltip {
       .enter()
       .append('div')
       .html(function (d) {
+
+
         // remove trailing ' School District'
         // case-insensitive, only single space delimiters
         let query = d.properties.NAME.replace(/\s/g, '+');
         let last_word_index = query.lastIndexOf('+');
         let second_last_word_index = query.lastIndexOf('+', last_word_index-1);
+
+        // HACK!
+        lea_names.push(query.substring(0, second_last_word_index).replace(/\+/g, ' '));
+
         if (query.substring(second_last_word_index+1).toLowerCase()  === 
             'school+district') {
           query = query.substring(0, second_last_word_index);
@@ -259,6 +267,50 @@ div.tooltip {
       }
     });
 
+    d3.csv('../CoursesPerSchoolDistrict/Stefan - LEAs.csv',
+      function(d) {
+        return {
+          id: d.WarehouseDisID,
+          name: d.District
+        };
+      },
+      function(error, district_data) {
+
+        district_data = district_data.filter(
+          function(d) {
+            return lea_names.find(e => e === d.name) === undefined;
+          });
+
+        // https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript
+        district_data.sort((a,b) => a.name.localeCompare(b.name));
+
+
+        let select_divs = d3.select('.charters')
+          .selectAll('div')
+          .data(district_data)
+          .enter()
+          .append('div')
+          .html(function (d) {
+
+            let query = d.name.replace(/\s/g, '+');
+            /*
+            // remove trailing ' School District'
+            // case-insensitive, only single space delimiters
+            let query = d.properties.NAME.replace(/\s/g, '+');
+            let last_word_index = query.lastIndexOf('+');
+            let second_last_word_index = query.lastIndexOf('+', last_word_index-1);
+            if (query.substring(second_last_word_index+1).toLowerCase()  === 
+                'school+district') {
+              query = query.substring(0, second_last_word_index);
+            }
+            return '<a href= "../CoursesPerSchoolDistrict?lea=' + query +'" target="_blank">' +
+              d.properties.NAME + '</a>';
+
+            */
+
+            return '<div>' + d.name + '</div>';
+          });
+        });
   });
 
 </script>
