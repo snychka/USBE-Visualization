@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Courses per School (in a District)</title>
+<title>Endorsements per School (in a District)</title>
 <style>
 
 .axis { font: 14px sans-serif; }
@@ -67,7 +67,7 @@ function (d) {
   return {
     lea: d.LEA,
     school: d.school_name,
-    course: d.cert_endo_degree_desc
+    endo: d.cert_endo_degree_desc
   };
 },
 function(error, data) {
@@ -82,7 +82,7 @@ function(error, data) {
 
 
   // citation: http://www.shanegibney.com/shanegibney/d3-js-v4-count-values-in-an-object/
-  let course_count_data = d3.nest()
+  let endo_count_data = d3.nest()
     .key(function(d) {
       return d.school;
     })
@@ -91,7 +91,7 @@ function(error, data) {
     })
     .entries(filtered_data);
 
-  let sorted_data = course_count_data.sort(function(a,b) { 
+  let sorted_data = endo_count_data.sort(function(a,b) { 
     let lea_A =  a.key.toLowerCase();
     let lea_B =  b.key.toLowerCase();
 

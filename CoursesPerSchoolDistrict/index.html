@@ -37,7 +37,7 @@
 
 // max width of bar (in px likely)
 const MAX_WIDTH = 100;
-const DATA_FILE =  'CS ENDO Scrub.xlsx - Overall SB93 Endos.csv';
+const DATA_FILE =  '20180823-1732-BrandonCSTaskForce - Sheet2.csv';
 
 let params = (new URL(document.location)).searchParams;
 let district = params.get('lea') + ' District';
@@ -65,9 +65,9 @@ let graph = svg.append("g")
 d3.csv(DATA_FILE,
 function (d) {
   return {
-    lea: d.LEA,
-    school: d.school_name,
-    course: d.cert_endo_degree_desc
+    lea: d.district_id,
+    school: d.school_id,
+    enrol: d.Enrolled
   };
 },
 function(error, data) {

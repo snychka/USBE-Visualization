@@ -65,9 +65,11 @@ div.tooltip {
 
 <h1>Utah School Districts</h1>
 
+<h2>Links to course enrollments per district</h2>
+
 <p> Hover over district and click on link in tool tip.</p>
 
-<p> Will show number of CS endorsements per school for the given district (LEA) </p>
+<p> Will show CS enrollments per school for the given district (LEA) </p>
 
 <div class="container">
 <div class="svg">
@@ -119,7 +121,7 @@ div.tooltip {
             'school+district') {
           query = query.substring(0, second_last_word_index);
         }
-        return '<a href= "../EndorsementsPerSchoolDistrict?lea=' + query +'" target="_blank">' +
+        return '<a href= "../CoursesPerSchoolDistrict?lea=' + query +'" target="_blank">' +
           d.properties.NAME + '</a>';
         console.log(temp);
         return temp;
@@ -219,7 +221,7 @@ div.tooltip {
 
           tooltip.html
             (
-            '<a href= "../EndorsementsPerSchoolDistrict?lea=' + query +'" target="_blank">' +
+            '<a href= "../CoursesPerSchoolDistrict?lea=' + query +'" target="_blank">' +
             d.properties.NAME + '</a>'
             )
             .style('left', (d3.event.pageX) + 'px')
