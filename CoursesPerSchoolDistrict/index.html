@@ -16,7 +16,7 @@
 
 </head>
 
-<h1 class='title'>Endorsements per School</h1>
+<h1 class='title'>Courses per School</h1>
 
 <div>
 <svg width="960" height="700"></svg>
@@ -67,7 +67,7 @@ function (d) {
   return {
     lea: d.district_id,
     school: d.school_number,
-    enrol: d[Student enrollment]
+    enrol: d['Student enrollment']
   };
 },
 function(error, data) {
