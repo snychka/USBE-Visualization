@@ -111,7 +111,6 @@ function(error, data) {
     })
     .entries(filtered_data);
 
-  console.log(course_count_data);
 
   let sorted_data = course_count_data.sort(function(a,b) { 
     let lea_A =  a.key.toLowerCase();
@@ -136,8 +135,9 @@ function(error, data) {
   //   and max:  https://stackoverflow.com/questions/11488194 (2nd "answer")
   // Add the x Axis
   x.domain(sorted_data.map(function(d) { return d.key; }));
-  y.domain([0, d3.max(sorted_data, 
-		function(d) { return +d.value; })]);
+  let max_y_value = d3.max(sorted_data, function(d) { return +d.value; });
+  y.domain([0, max_y_value]);
+
 
   graph.append("g")
     .attr("class", "axis")
@@ -150,13 +150,12 @@ function(error, data) {
       .attr("transform", "rotate(-65)");
 
   // Add the y Axis
-  // need to fix so not redundant for small y domains (e.g., Box Elder)
   graph.append("g")
     .attr("class", "axis")
     .call(
       d3
         .axisLeft(y)
-        .ticks(null)
+        .ticks(max_y_value < 10 ? max_y_value : 10)
         .tickFormat(d3.format("d"))
       );
 
