@@ -154,11 +154,7 @@ function(error, data) {
     .call(
       d3
         .axisLeft(y)
-        .ticks(d3.max(
-          sorted_data,
-          function(d) {
-            return d.value;
-          }))
+        .ticks(null)
         .tickFormat(d3.format("d"))
       );
 

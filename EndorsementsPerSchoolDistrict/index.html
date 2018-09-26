@@ -128,6 +128,8 @@ function(error, data) {
       .attr("transform", "rotate(-65)");
 
   // Add the y Axis
+  // consider making y-axis ticks like courses version;
+  // this one breaks down if tere are too many values
   graph.append("g")
     .attr("class", "axis")
     .call(
