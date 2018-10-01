@@ -38,7 +38,8 @@
 
 // max width of bar (in px likely)
 const MAX_WIDTH = 100;
-const DATA_FILE =  '20180823-1732-BrandonCSTaskForce - Sheet1.csv';
+//const DATA_FILE =  '20180823-1732-BrandonCSTaskForce - Sheet1.csv';
+const DATA_FILE =  '20180928-1534-BrandonCSTaskForce - Sheet1.csv';
 
 let params = (new URL(document.location)).searchParams;
 let bare_lea = params.get('lea');
@@ -80,6 +81,7 @@ function (d) {
   return {
     lea: d.district_id,
     school: d.school_number,
+    school_name: d.School,
     enrol: d['Student enrollment'],
     year: d.school_year
   };
@@ -102,7 +104,8 @@ function(error, data) {
   // citation: http://www.shanegibney.com/shanegibney/d3-js-v4-count-values-in-an-object/
   let course_count_data = d3.nest()
     .key(function(d) {
-      return d.school;
+      //return d.school;
+      return d.school_name;
     })
     .rollup(function(leaves) {
       let enrolment = 0;
