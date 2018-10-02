@@ -226,6 +226,12 @@ function(error, data) {
 
   update_graph(data, 'type');
 
+  let year_select = document.querySelector('#year-select');
+  year_select.addEventListener('change', function(e) {
+    let type = this.options[this.selectedIndex].value;
+    update_graph(data, type);
+  });
+
 });
 
 
