@@ -150,7 +150,6 @@ div.tooltip {
         }
         return '<a href= "../CoursesPerSchoolDistrict?lea=' + query +'" target="_blank">' +
           d.properties.NAME + '</a>';
-        console.log(temp);
         return temp;
       });
   }
@@ -292,7 +291,7 @@ div.tooltip {
           .append('div')
           .html(function (d) {
 
-            let query = d.name.replace(/\s/g, '+');
+            let query = encodeURIComponent(d.name);
             return '<a href= "../CoursesPerSchoolDistrict?lea=' + query + '&charter=true" target="_blank">' +
               d.name + '</a>';
 
