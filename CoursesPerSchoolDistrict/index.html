@@ -83,7 +83,6 @@ d3.csv(DATA_FILE,
 function (d) {
   return {
     lea: d.district_id,
-    school: d.school_number,
     school_name: d.School,
     enrol: d['Student enrollment'],
     year: d.school_year
@@ -93,6 +92,7 @@ function(error, data) {
 
   if (error) throw error;
 
+  // as base data has this eventually can get rid of this 2nd step
   let district_id = district_data.find( e => e.name === bare_lea).id;
 
   let filtered_data = data.filter(function(d) {
@@ -106,7 +106,6 @@ function(error, data) {
   // citation: http://www.shanegibney.com/shanegibney/d3-js-v4-count-values-in-an-object/
   let course_count_data = d3.nest()
     .key(function(d) {
-      //return d.school;
       return d.school_name;
     })
     .rollup(function(leaves) {
