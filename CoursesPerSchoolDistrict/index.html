@@ -110,85 +110,100 @@ function(error, data) {
 
   if (error) throw error;
 
-  // as base data has this eventually can get rid of this 2nd step
-  let district_id = district_data.find( e => e.name === bare_lea).id;
+  function create_graph(data, year) {
 
-  let filtered_data = data.filter(function(d) {
-    if (d.lea === district_id && d.year === '2018') {
-      return d;
-    }
+    // as base data has this eventually can get rid of this 2nd step
+    let district_id = district_data.find( e => e.name === bare_lea).id;
+
+    let filtered_data = data.filter(function(d) {
+      if (d.lea === district_id && d.year === year) {
+        return d;
+      }
+    });
+
+
+
+    // citation: http://www.shanegibney.com/shanegibney/d3-js-v4-count-values-in-an-object/
+    let course_count_data = d3.nest()
+      .key(function(d) {
+        return d.school_name;
+      })
+      .rollup(function(leaves) {
+        let enrolment = 0;
+        leaves.forEach( e => enrolment +=  +e.enrol )
+        return enrolment;
+      })
+      .entries(filtered_data);
+
+
+    let sorted_data = course_count_data.sort(function(a,b) { 
+      let lea_A =  a.key.toLowerCase();
+      let lea_B =  b.key.toLowerCase();
+
+      if (lea_A < lea_B) {
+        return -1;
+      } else if (lea_A > lea_B) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+
+    // sigh.  based on
+    // - https://bl.ocks.org/d3noob/3c040800ff6457717cca586ae9547dbf rotation
+    // - https://bl.ocks.org/mbostock/3885304 text x axis labels
+    // - only ints on y https://stackoverflow.com/questions/13576906
+    // - no ticksSubdivide in d4
+    //   http://www.d3noob.org/2016/08/changing-number-of-ticks-on-axis-in.html
+    //   and max:  https://stackoverflow.com/questions/11488194 (2nd "answer")
+    // Add the x Axis
+    x.domain(sorted_data.map(function(d) { return d.key; }));
+    let max_y_value = d3.max(sorted_data, function(d) { return +d.value; });
+    y.domain([0, max_y_value]);
+
+
+    graph.append("g")
+      .attr("class", "axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", "rotate(-65)");
+
+    // Add the y Axis
+    graph.append("g")
+      .attr("class", "axis")
+      .call(
+        d3
+          .axisLeft(y)
+          .ticks(max_y_value < 10 ? max_y_value : 10)
+          .tickFormat(d3.format("d"))
+        );
+
+    graph.selectAll(".bar")
+    .data(sorted_data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.key); })
+      .attr("y", function(d) { return y(+d.value); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.value); });
+
+  } // end create_graph
+
+  create_graph(data, '2018');
+
+  let year_select = document.querySelector('#year-select');
+  // hmmm ... couldn't use an arrow function callback as had no this??
+  // https://dmitripavlutin.com/when-not-to-use-arrow-functions-in-javascript/
+  // horribly written, but probably right (#2)
+  year_select.addEventListener('change', function(e) {
+    let year = this.options[this.selectedIndex].value;
+    create_graph(data, year);
   });
-
-
-
-  // citation: http://www.shanegibney.com/shanegibney/d3-js-v4-count-values-in-an-object/
-  let course_count_data = d3.nest()
-    .key(function(d) {
-      return d.school_name;
-    })
-    .rollup(function(leaves) {
-      let enrolment = 0;
-      leaves.forEach( e => enrolment +=  +e.enrol )
-      return enrolment;
-    })
-    .entries(filtered_data);
-
-
-  let sorted_data = course_count_data.sort(function(a,b) { 
-    let lea_A =  a.key.toLowerCase();
-    let lea_B =  b.key.toLowerCase();
-
-    if (lea_A < lea_B) {
-      return -1;
-    } else if (lea_A > lea_B) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-
-
-  // sigh.  based on
-  // - https://bl.ocks.org/d3noob/3c040800ff6457717cca586ae9547dbf rotation
-  // - https://bl.ocks.org/mbostock/3885304 text x axis labels
-  // - only ints on y https://stackoverflow.com/questions/13576906
-  // - no ticksSubdivide in d4
-  //   http://www.d3noob.org/2016/08/changing-number-of-ticks-on-axis-in.html
-  //   and max:  https://stackoverflow.com/questions/11488194 (2nd "answer")
-  // Add the x Axis
-  x.domain(sorted_data.map(function(d) { return d.key; }));
-  let max_y_value = d3.max(sorted_data, function(d) { return +d.value; });
-  y.domain([0, max_y_value]);
-
-
-  graph.append("g")
-    .attr("class", "axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x))
-    .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("dx", "-.8em")
-      .attr("dy", ".15em")
-      .attr("transform", "rotate(-65)");
-
-  // Add the y Axis
-  graph.append("g")
-    .attr("class", "axis")
-    .call(
-      d3
-        .axisLeft(y)
-        .ticks(max_y_value < 10 ? max_y_value : 10)
-        .tickFormat(d3.format("d"))
-      );
-
-  graph.selectAll(".bar")
-  .data(sorted_data)
-  .enter().append("rect")
-    .attr("class", "bar")
-    .attr("x", function(d) { return x(d.key); })
-    .attr("y", function(d) { return y(+d.value); })
-    .attr("width", x.bandwidth())
-    .attr("height", function(d) { return height - y(d.value); });
 
 });
 
