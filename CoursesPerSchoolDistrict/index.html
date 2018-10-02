@@ -183,14 +183,18 @@ function(error, data) {
           .tickFormat(d3.format("d"))
         );
 
-    graph.selectAll(".bar")
-    .data(sorted_data)
-    .enter().append("rect")
+    let bars = graph.selectAll(".bar")
+    .data(sorted_data);
+
+    bars.enter().append("rect")
+      .merge(bars)
       .attr("class", "bar")
       .attr("x", function(d) { return x(d.key); })
       .attr("y", function(d) { return y(+d.value); })
       .attr("width", x.bandwidth())
       .attr("height", function(d) { return height - y(d.value); });
+
+    bars.exit().remove();
 
   } // end create_graph
 
