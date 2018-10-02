@@ -12,6 +12,15 @@
   fill: steelblue;
 }
 
+.instructions {
+  display: inline;
+  padding-right: 30px;
+}
+
+#year-select {
+  font-size:  1.2em;
+}
+
 </style>
 
 </head>
@@ -24,8 +33,16 @@
 
 <h1 class='title'>Business vs Computing Course Enrollments</h1>
 
-<p>Enrollments per year, for the entire state, of Business vs Computing Science
-courses.</p>
+<h3>Enrollments per year, for the entire state, of Business vs Computing Science
+courses.</h3>
+
+<p class='instructions'>Select to show individual <strong>Courses</strong>, or
+to group by Computing Science vs Business (<strong>CS vs Bus</strong>):</p>
+
+<select id="year-select">
+    <option value="course">Courses</option>
+    <option value="type">CS vs Bus</option>
+</select>
 
 <div>
 <svg width="960" height="700"></svg>
