@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Course Enrollments per School (in a District)</title>
+<title>Course Enrollments per School (in a District or Charter)</title>
 <style>
 
 .axis { font: 14px sans-serif; }
@@ -43,13 +43,17 @@ const DATA_FILE =  '20180928-1534-BrandonCSTaskForce - Sheet1.csv';
 
 let params = (new URL(document.location)).searchParams;
 let bare_lea = params.get('lea');
-let district = bare_lea + ' District';
+let charter = params.get('charter') !== null;
 
 let mapping = {
-  'Salt Lake City District': 'Salt Lake District'
+  'Salt Lake City': 'Salt Lake'
 }
+bare_lea = mapping[bare_lea] || bare_lea;
+let district = bare_lea;
 
-district = mapping[district] || district;
+if (charter !== true) {
+  district = bare_lea + ' District';
+}
 
 document.getElementsByClassName('title')[0].innerHTML +=
   ' (' + district + ')';
