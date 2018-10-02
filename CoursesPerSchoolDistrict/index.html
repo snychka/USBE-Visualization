@@ -57,7 +57,8 @@
 
 // max width of bar (in px likely)
 const MAX_WIDTH = 100;
-const DATA_FILE =  '20180928-1534-BrandonCSTaskForce - Sheet1.csv';
+const DATA_LOCATION = '../enrolment-data/';
+const DATA_FILE =  DATA_LOCATION + '20180928-1534-BrandonCSTaskForce - Sheet1.csv';
 
 let params = (new URL(document.location)).searchParams;
 let bare_lea = params.get('lea');
@@ -91,7 +92,7 @@ let y_axis;
 let graph = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv('Stefan - LEAs.csv',
+d3.csv('../enrolment-data/Stefan - LEAs.csv',
 function(d) {
   return {
     id: d.WarehouseDisID,
