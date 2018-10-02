@@ -50,17 +50,19 @@ const BUS = 'Business';
 const CS = 'Computing Science';
 
 // there's a 35020000034 in the file ... ask Brandon
+// redundant data structure ... may be a better way
 let course_mapping = {
-  '32020000150' : { type : BUS },
-  '32020000216' : { type : BUS },
-  '32020013150' : { type : BUS },
-  '32020013216' : { type : BUS },
-  '35020000007' : { type : CS },
-  '35020000030' : { type : CS },
-  '35020000035' : { type : CS },
-  '35020000060' : { type : CS },
-  '35020013030' : { type : CS },
-  '35020013035' : { type : CS }
+  '32020000150' : { course: '32020000150', type : BUS },
+  '32020000216' : { course: '32020000216', type : BUS },
+  '32020013150' : { course: '32020013150', type : BUS },
+  '32020013216' : { course: '32020013216', type : BUS },
+  '35020000007' : { course: 'Exploring CS', type : CS },
+  '35020000030' : { course: 'Computer Programming 1', type : CS },
+  '35020000034' : { course: 'A.P.  Computer Science Principles', type : CS },
+  '35020000035' : { course: 'Computer Science Principles', type : CS },
+  '35020000060' : { course: 'Web Development 1', type : CS },
+  '35020013030' : { course: 'Computer Programming 1 CE', type : CS },
+  '35020013035' : { course: 'Computer Programming 2 CE', type : CS }
 };
 
 
@@ -92,7 +94,7 @@ function(error, data) {
   // tally up enrolments per year and course type
   // (should be able to reasonably easy make it more generic
   //  so later it can, with a few mods., handle per course name)
-  function project_data(d) {
+  function project_data(d, prop) {
 
     let graph_map = new Map();
 
@@ -100,7 +102,7 @@ function(error, data) {
 
       let type_obj = course_mapping[d.code];
       if (!type_obj) { return; }
-      let type = type_obj.type;
+      let type = type_obj[prop];
 
       let key = JSON.stringify({year: d.year, type});
       let val = graph_map.get(key);
@@ -115,7 +117,7 @@ function(error, data) {
   }
 
 
-  let graph_map = project_data(data);
+  let graph_map = project_data(data, 'type');
 
   // create an array, with a nested structure, conducive to the nested
   // structure of the bar chart
@@ -148,7 +150,10 @@ function(error, data) {
 
   let legend_scale = d3.scaleOrdinal()
     .domain([1,bar_type_keys.length])
-    .range(['slateblue', 'steelblue'])
+    // https://stackoverflow.com/questions/38898947/dynamically-create-legend-in-d3
+    // and apparently from colorBrewer
+    .range(["#d73027", "#f46d43", "#fdae61", "#fee090", "#e0f3f8",
+            "#abd9e9", "#74add1", "#4575b4"].slice(0, bar_type_keys.length));
 
   x0.domain(graph_data.map( d => d.year ));
   x1.domain(bar_type_keys).rangeRound([0, x0.bandwidth()]);
