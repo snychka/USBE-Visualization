@@ -218,6 +218,7 @@ function(error, data) {
 
     bars.enter().append("rect")
       .merge(bars)
+      .transition(d3.transition().duration(750))
       .attr("class", "bar")
       .attr("x", function(d) { return x(d.key); })
       .attr("y", function(d) { return y(+d.value); })
