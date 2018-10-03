@@ -109,6 +109,8 @@ function(error, data) {
 
   function update_graph(data, type) {
 
+    graph.selectAll('*').remove();
+
     // tally up enrolments per year and course type
     // (should be able to reasonably easy make it more generic
     //  so later it can, with a few mods., handle per course name)
