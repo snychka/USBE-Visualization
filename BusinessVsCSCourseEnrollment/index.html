@@ -6,6 +6,18 @@
 <title>Courses per School (in a District)</title>
 <style>
 
+/* https://bl.ocks.org/alandunning/274bf248fd0f362d64674920e85c1eb7 */
+.tooltip {
+  position: absolute;
+  display: none;
+  min-width: 80px;
+  height: auto;
+  background: none repeat scroll 0 0 #ffffff;
+  border: 1px solid #6F257F;
+  padding: 14px;
+  text-align: center;
+}
+
 .axis { font: 14px sans-serif; }
 
 .bar {
@@ -178,6 +190,10 @@ function(error, data) {
     x1.domain(bar_type_keys).rangeRound([0, x0.bandwidth()]);
     y.domain([0, d3.max(graph_data, el => d3.max(el.inner, d => d.enrol))]);
 
+    let tooltip = d3.select('body')
+      .append('div')
+      .attr('class', 'tooltip');
+
     graph.append('g')
       .selectAll('g')
       .data(graph_data)
@@ -190,7 +206,19 @@ function(error, data) {
         .attr('y', d => y(d.enrol))
         .attr('width', x1.bandwidth())
         .attr('height', d => height - y(d.enrol))
-        .attr('fill', d=> legend_scale(d.type));
+        .attr('fill', d=> legend_scale(d.type))
+        // https://bl.ocks.org/alandunning/274bf248fd0f362d64674920e85c1eb7
+        .on('mousemove', function(d) {
+            console.log(d);
+            tooltip
+              .style('display', 'inline-block')
+              .html(d.type + ':<br />' + d3.format(',')(d.enrol))
+              .style('left', (d3.event.pageX - 50) + 'px')
+              .style('top', (d3.event.pageY - 70) + 'px');
+        })
+        .on('mouseleave', () =>  {
+          tooltip.style('display', 'none');
+         });
 
     graph.append('g')
       .attr('class', 'axis')
