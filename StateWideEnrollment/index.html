@@ -12,6 +12,16 @@
   fill: steelblue;
 }
 
+div.tooltip {
+  position: absolute;    
+  text-align: center;    
+  padding: 2px;    
+  font: 12px sans-serif;    
+  background: lightsteelblue;    
+  border: 0px;                    
+  border-radius: 8px;
+}
+
 </style>
 
 </head>
@@ -75,6 +85,20 @@ d3.csv(DATA_FILE, function(error, data) {
   x1.domain(bar_type_keys).rangeRound([0, x0.bandwidth()]);
   y.domain([0, d3.max(graph_data, el => d3.max(el.inner, d => d.enrol))]);
 
+  let tooltip = d3.select('body')
+    .append('div')
+    .attr('class', 'tooltip')
+    .style('opacity', 0);
+   
+  let legend = graph.append('g')
+      .attr('font-family', 'sans-serif')
+      .attr('font-size', 10)
+    .selectAll('g')
+    .data(bar_type_keys)
+    .enter().append('g')
+      // -20 a bit of a hack :)
+      .attr('transform', (d, i) => 'translate(0,' + (-20 + i * 20) + ')');
+
   graph.append('g')
     .selectAll('g')
     .data(graph_data)
@@ -87,7 +111,20 @@ d3.csv(DATA_FILE, function(error, data) {
       .attr('y', d => y(d.enrol))
       .attr('width', x1.bandwidth())
       .attr('height', d => height - y(d.enrol))
-      .attr('fill', d=> legend_scale(d.type));
+      .attr('fill', d=> legend_scale(d.type))
+      .on('mouseenter', function(d) {
+        tooltip
+          .style('opacity', 0.9)
+          .html(d.enrol)
+          .style('left', (d3.event.pageX) + 'px')
+          .style('top', (d3.event.pageY) + 'px');
+      })
+      .on('mouseleave', () =>  {
+        if (d3.event.relatedTarget &&
+            d3.event.relatedTarget.tagName === 'svg') {
+          tooltip.style('opacity', 0);
+        }
+       })
 
   graph.append('g')
     .attr('class', 'axis')
@@ -100,15 +137,6 @@ d3.csv(DATA_FILE, function(error, data) {
   graph.append('g')
     .attr('class', 'axis')
     .call(d3.axisLeft(y).ticks(null).tickSizeOuter(0));
-   
-  let legend = graph.append('g')
-      .attr('font-family', 'sans-serif')
-      .attr('font-size', 10)
-    .selectAll('g')
-    .data(bar_type_keys)
-    .enter().append('g')
-      // -20 a bit of a hack :)
-      .attr('transform', (d, i) => 'translate(0,' + (-20 + i * 20) + ')');
 
   legend.append('rect')
     .attr('x', 19)
