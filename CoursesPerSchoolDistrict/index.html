@@ -208,8 +208,10 @@ function(error, data) {
     let bars = graph.selectAll(".bar")
       .data(sorted_data);
 
-    bars.enter().append("rect")
+    bars
+      .enter().append("rect")
       .merge(bars)
+      .transition(d3.transition().duration(750))
       .attr("class", "bar")
       .attr("x", function(d) { return x(d.key); })
       .attr("y", function(d) { return y(+d.value); })
