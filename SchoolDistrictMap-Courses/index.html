@@ -39,6 +39,18 @@
 	overflow-y: scroll;
 }
 
+.intro {
+  float: left;
+	display: table-row;
+}
+
+.courses {
+  float: left;
+	display: table-row;
+}
+
+
+
 /* didn't need to use. leaving in, but weird */
 .clear {
     clear: both;
@@ -62,6 +74,8 @@ div.tooltip {
   border-radius: 8px;
 }
 
+
+
 </style>
 
     <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
@@ -72,6 +86,8 @@ div.tooltip {
 </head>
 <body>
 
+<div class='intro'>
+
 <h1>Utah School Districts</h1>
 
 <h2>Links to Digital course enrollments per district</h2>
@@ -81,6 +97,42 @@ div.tooltip {
 
 <p> Will show course enrollments per school for the given district or
 Charter. </p>
+
+</div>
+
+
+<div class='courses'>
+
+<p> Courses shown with course codes. Computing Science Courses:</p>
+
+<ul>
+
+  <li>A.P.  Computer Science Principles (35020000034)</li>
+  <li>Computer Programming 1           (35020000030)</li>
+  <li>Computer Programming 1 CE        (35020013030)</li>
+  <li>Computer Programming 2 CE        (35020013035)</li>
+  <li>Computer Science Principles      (35020000035)</li>
+  <li>Exploring CS                     (35020000007)</li>
+  <li>Web Development 1                (35020000060)</li>
+
+</ul>
+
+<p>Business courses:</p>
+
+<ul>
+
+  <li>Business Office Specialist       (32020000216)</li>
+  <li>Business Office Specialist CE    (32020013216)</li>
+  <li>Digital Business Applications    (32020000150)</li>
+  <li>Digital Business Applications CE (32020013150)</li>
+
+</ul>
+
+</div>
+
+<div class='clear'></div>
+
+<hr />
 
 <div class="container">
 <div class="svg"></div>
