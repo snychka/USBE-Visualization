@@ -34,13 +34,18 @@
   font-size:  1.2em;
 }
 
+.message {
+  color: red;
+}
+
 </style>
 
 </head>
 
 <h1 class='title'>Digital Course Enrollments per School</h1>
 
-<h2 class='instructions'>Please select a year:</h2>
+<h2 class='instructions' >Please select a year:</h2>
+
 
 <select id="year-select">
     <option value="2018">2018</option>
@@ -49,9 +54,12 @@
     <option value="2015">2015</option>
 </select>
 
+<h2 class='message' style='display: none'>NO ENROLLMENTS</h2>
+
 <div>
 <svg width="960" height="700"></svg>
 </div>
+
 
 <script src="https://d3js.org/d3.v4.js"></script>
 
@@ -104,6 +112,7 @@ let y_axis;
 let graph = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
 d3.csv('../enrolment-data/Stefan - LEAs.csv',
 function(d) {
   return {
@@ -130,6 +139,9 @@ function(error, data) {
 
   function create_graph(data, year) {
 
+  // https://stackoverflow.com/questions/4866229/can-you-check-an-objects-css-display-with-javascript
+  document.querySelector('.message').style.display = 'none';
+
     // as base data has this eventually can get rid of this 2nd step
     let district_id = district_data.find( e => e.name === bare_lea).id;
 
@@ -138,8 +150,6 @@ function(error, data) {
         return d;
       }
     });
-
-
 
     // citation: http://www.shanegibney.com/shanegibney/d3-js-v4-count-values-in-an-object/
     let course_count_data = d3.nest()
@@ -179,6 +189,12 @@ function(error, data) {
     let max_y_value = d3.max(sorted_data, function(d) { return +d.value; });
     y.domain([0, max_y_value]);
 
+    if (sorted_data.length === 0)  {
+      graph.selectAll('*').remove();
+      let message = document.querySelector('.message');
+      message.style.display = 'block';
+      first = true;
+    }
 
     // https://bl.ocks.org/HarryStevens/678935d06d4601c25cb141bacd4068ce
     // helped me see what part of axis code is adding, and not so much
@@ -196,6 +212,7 @@ function(error, data) {
         .attr("class", "y");
 
       first = false;
+
 
     }
 
@@ -215,6 +232,7 @@ function(error, data) {
             .ticks(max_y_value < 10 ? max_y_value : 10)
             .tickFormat(d3.format("d"))
           );
+
 
     let tooltip = d3.select('body')
       .append('div')
