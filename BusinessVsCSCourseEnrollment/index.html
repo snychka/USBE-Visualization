@@ -186,7 +186,7 @@ function(error, data) {
     console.log(course_mapping_array);
     let bar_type_keys = Array.from(bar_type_set).sort( (a, b) => {
       let a_index = course_mapping_array.indexOf(a);
-      return a_index ?
+      return a_index >= 0 ?
         a_index - course_mapping_array.indexOf(b) :
         a.localeCompare(b);
     });
