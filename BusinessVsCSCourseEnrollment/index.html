@@ -80,17 +80,17 @@ const CS = 'Computing Science';
 // redundant data structure ... may be a better way.
 // also should be in a separate file at this point.
 let course_mapping = {
-  '32020000150' : { course: 'Digital Business Applications', type : BUS },
-  '32020000216' : { course: 'Business Office Specialist', type : BUS },
-  '32020013150' : { course: 'Digital Business Applications CE', type : BUS },
-  '32020013216' : { course: 'Business Office Specialist CE', type : BUS },
-  '35020000007' : { course: 'Exploring CS', type : CS },
-  '35020000030' : { course: 'Computer Programming 1', type : CS },
   '35020000034' : { course: 'A.P.  Computer Science Principles', type : CS },
-  '35020000035' : { course: 'Computer Science Principles', type : CS },
-  '35020000060' : { course: 'Web Development 1', type : CS },
+  '35020000030' : { course: 'Computer Programming 1', type : CS },
   '35020013030' : { course: 'Computer Programming 1 CE', type : CS },
-  '35020013035' : { course: 'Computer Programming 2 CE', type : CS }
+  '35020013035' : { course: 'Computer Programming 2 CE', type : CS },
+  '35020000035' : { course: 'Computer Science Principles', type : CS },
+  '35020000007' : { course: 'Exploring CS', type : CS },
+  '35020000060' : { course: 'Web Development 1', type : CS },
+  '32020000216' : { course: 'Business Office Specialist', type : BUS },
+  '32020013216' : { course: 'Business Office Specialist CE', type : BUS },
+  '32020000150' : { course: 'Digital Business Applications', type : BUS },
+  '32020013150' : { course: 'Digital Business Applications CE', type : BUS },
 };
 
 
@@ -177,7 +177,19 @@ function(error, data) {
         bar_type_set.add(d.type);
       });
     });
-    let bar_type_keys = Array.from(bar_type_set);
+
+    // for ordering
+    let course_mapping_array = Object.keys(course_mapping).map( (e) =>
+      course_mapping[e].course
+    );
+    console.log(Object.keys(course_mapping));
+    console.log(course_mapping_array);
+    let bar_type_keys = Array.from(bar_type_set).sort( (a, b) => {
+      let a_index = course_mapping_array.indexOf(a);
+      return a_index ?
+        a_index - course_mapping_array.indexOf(b) :
+        a.localeCompare(b);
+    });
 
     let legend_scale = d3.scaleOrdinal()
       .domain([1,bar_type_keys.length])
